@@ -1,0 +1,131 @@
+<%-include ('../partials/head.ejs')%>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<style>
+    .personal-figure {
+    width: 60px;
+    height: 60px;
+  }
+  .personal-avatar {
+    width: 60px;
+    height: 60px;
+  }
+</style>
+<%-include ('../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Usuarios/Clientes</h1>
+      </div>
+      <div class="table-responsive">
+        <table class="table" id="table">
+            <thead >
+                <tr class="mt-4">
+                    <th class="text-center">#</th>
+                    <th class="text-center">Foto</th>
+                    <th class="text-center">Nome</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Numero</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Data Criação</th>
+                    <th class="text-center">Ultimo Login</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%usuarios.forEach(user =>{%>
+                    <tr class="<%=(user.isAdmin == true)?'table-warning':'table-light'%>">
+                        <td class="align-middle text-center"><%=user.id%></td>
+                        <td>
+                            <div class="personal-image">
+                                <label class="label">
+                                    <figure class="personal-figure">
+                                        <img src="<%=user.foto%>" id="foto" class="personal-avatar" alt="foto">
+                                    </figure>
+                                </label>
+                            </div>
+                        </td>
+                        <td class="align-middle text-center"><%=user.nome%></td>
+                        <td class="align-middle text-center"><%=user.email%></td>
+                        <td class="align-middle text-center"><%=user.numero%></td>
+                        <td class="align-middle text-center"><%=(user.status == true)?'Ativo':'Inativo'%></td>
+                        <td class="align-middle text-center"><%=user.dataCri%></td>
+                        <td class="align-middle text-center"><%=user.dataLog%></td>
+                        <td class="align-middle text-center"><button data-bs-toggle="modal" value="<%=user.id%>" onclick="editar(this.value)" data-bs-target="#modalEdit" class="btn btn-success">Editar</button></td>
+                    </tr>
+                <%})%>
+            </tbody>
+        </table>
+      </div>
+
+      <div class="modal fade" id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditLabel">Edição Usiario</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-12">
+                      <label for="isAdmin">Nivel Administrador</label>
+                      <select id="isAdmin" class="form-select">
+                          <option value="true">Sim</option>
+                          <option value="false">Não</option>
+                      </select>
+                  </div>
+                  <div class="col-12 mt-3">
+                    <label for="status">Status</label>
+                    <select id="status" class="form-select">
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="fecharModar" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" id="btnSalvar" onclick="salvar(this.value)" class="btn btn-primary">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+<%-include ('../partials/footerAdmin.ejs')%>
+<script>
+    function editar(userId) {
+        axios.get(`/api/usuario/${userId}`).then(resp =>{
+            if (resp.data.erro == undefined) {
+                var user = resp.data.user
+                var modalEditLabel =  document.getElementById("modalEditLabel")
+                var nome = user.nome.split(' ')
+                nome = `${nome[0]} ${(nome[1] != undefined)?nome[1]:''} (${userId})`
+                modalEditLabel.innerHTML = nome
+
+                var isAdmin = document.getElementById("isAdmin")
+                isAdmin.value = user.isAdmin
+                var status = document.getElementById("status")
+                status.value = user.status
+
+                var btnSalvar = document.getElementById("btnSalvar")
+                btnSalvar.value = userId
+            } else {
+                document.getElementById("fecharModar").click()
+                alert(resp.data.erro)
+            }
+        })
+    }
+
+    function salvar(userId) {
+        var isAdmin = document.getElementById("isAdmin").value
+        var status = document.getElementById("status").value
+        axios.post(`/api/usuario/`,{userId:userId,status:status,isAdmin:isAdmin}).then(resp =>{
+            if (resp.data.erro == undefined) {
+                alert(resp.data.resp)
+                document.location.reload()
+            } else {
+                document.getElementById("fecharModar").click()
+                alert(resp.data.erro)
+            }
+        })
+    }
+</script>
+<%-include ('../partials/scripts.ejs')%>

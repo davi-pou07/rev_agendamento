@@ -6,6 +6,7 @@ const { Op } = require('sequelize')
 const User = require("../Database/User")
 const auth = require("../middlewares/auth")
 
+const moment = require("moment")
 const bcrypt = require("bcrypt")
 const validator = require("validator")
 
@@ -124,6 +125,7 @@ router.post("/user/login",async(req,res)=>{
             var correct = bcrypt.compareSync(senha, user.senha)
             if(correct){
                 req.session.user = user.id 
+                User.update({updatedAt:moment().format()},{where:{id:user.id}})
                 res.redirect("/")
             }else{
                 var erro = `Erro: Credenciais inválidas`
@@ -148,12 +150,16 @@ router.post("/user/login",async(req,res)=>{
 
 //==========================EDIÇAÕ DE USUARIO==========================
 
-router.get("/user/edicao",auth,async(req,res)=>{
+router.get("/user/editar",auth,async(req,res)=>{
+    var erro = req.flash('erro')
+    erro = (erro == undefined || erro.length == 0)?undefined:erro
+    var msm = req.flash('msm')
+    msm = (msm == undefined || msm.length == 0)?undefined:msm
     var usuarioId = req.session.user
     if (usuarioId != undefined) {
-        var usuario = await User.findByPk(usuarioId)
+        var usuario = await User.findOne({where:{id:usuarioId,status:true}})
         if (usuario != undefined) {
-            //Aqui
+            res.render("user/editar",{foto:usuario.foto,nome:usuario.nome,email:usuario.email,numero:usuario.numero,erro:erro,msm:msm})
         } else {
             req.flash('erro',"Erro ao identificar o usuario, realize login novamente")
             res.redirect("/user/login")
@@ -161,6 +167,69 @@ router.get("/user/edicao",auth,async(req,res)=>{
     } else {
         req.flash('erro',"Sessão expirada")
         res.redirect("/user/login")
+    }
+})
+
+
+router.post("/user/editar",auth,async(req, res) => {
+    var {nome,email,numero,senhaAtual,senha,confirm,foto} = req.body
+    var userId = req.session.user
+    if (nome != '' && nome != undefined && email != '' && email != undefined && numero != '' && numero != undefined) {
+        var user = await User.findByPk(userId)
+        if (user != undefined) {
+            if (senha == '' && confirm == '' && senhaAtual == '') {
+                senhaAtual = undefined
+                var correct = true
+            } else {
+                var correct = bcrypt.compareSync(senhaAtual, user.senha)
+            }
+            if (correct) {
+                if (senha == confirm && senha != senhaAtual) {
+                    var usu = await User.findOne({ where: { [Op.or]: [{ numero: numero }, { email: email }] } })
+                    if (usu == undefined || usu.id == user.id) {
+
+                        if (senha != '') {
+                            var salt = bcrypt.genSaltSync(10)
+                            var hash = bcrypt.hashSync(senha, salt)
+                        }else{
+                            var hash = user.senha
+                        }
+
+                        User.update({
+                            nome: nome,
+                            email: email,
+                            numero: numero,
+                            senha: hash,
+                            foto: foto
+                        }, { where: { id: user.id } }).then(() => {
+                            var msm = 'Atualizações realizada com sucesso'
+                            req.flash('msm',msm)
+                            res.redirect("/user/editar")
+                        })
+                    } else {
+                        console.log(usu.email, usu.login)
+                        console.log(user.email, user.login)
+                        res.json({ resp: "Ja existe um usuario com esses dados" })
+                    }
+                } else {
+                    var erro = `Senhas incorreta`
+                    req.flash('erro',erro)
+                    res.redirect("/user/editar")
+                }
+            } else {
+                var erro = `Senhas incorreta`
+                req.flash('erro',erro)
+                res.redirect("/user/editar")
+            }
+        } else {
+            var erro = `Sessão expirada`
+            req.flash('erro',erro)
+            res.redirect("/user/login")
+        }
+    } else {
+        var erro = `Informações obrigatórias não podem ficar vazias`
+        req.flash('erro',erro)
+        res.redirect("/user/editar")
     }
 })
 

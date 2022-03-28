@@ -11,7 +11,8 @@ const bodyParser = require("body-parser")
 const User = require("./Database/User")
 
 const userController = require("./controller/userController")
-
+const adminController = require("./controller/adminController")
+const apiController = require("./controller/apiController")
 //databases
 const path = require('path')
 const PORT = process.env.PORT || 6060
@@ -25,6 +26,7 @@ app.use(session({
 }))
 app.use(flash())
 
+const usuarioAdmin = require("./functions/usuarioAdmin")
 
 //usar o EJS como view engine | renderizador de html
 app.set('views', path.join(__dirname, 'views'))
@@ -37,9 +39,21 @@ app.use(bodyParser.json({ limit: '50mb' }))
 
 app.use("/",userController)
 
+
+app.use("/admin",adminController)
+app.use("/api",apiController)
+
 app.get("/", async(req, res) => {
    res.render("index")
 })
+
+app.get("/admin", async(req, res) => {
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        res.render("admin/index")
+    } else {
+        res.redirect("/")
+    }
+ })
 
 app.listen(PORT, () => {
     console.log("Servidor ligado")

@@ -11,19 +11,28 @@
         </div>
         <%}%>
 
+        <%if(msm != undefined){%>
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    <%=msm%>
+                </div>
+              </div>
+            <%}%>
+
         <div class="py-5 text-center">
-            <h2>Cadastro de usuario</h2>
+            <h2>Edição do cadastro de usuario</h2>
         </div>
-        <form action="/user/registrar" method="post" class="needs-validation" id="form" novalidate>
+        <form action="/user/editar" method="post" class="needs-validation" id="form" novalidate>
             <div class="row">
                 <div class="col-12">
                     <div class="personal-image">
                         <label class="label">
                             <input type="hidden" name="foto" value="<%=foto%>" id="fotoBase64">
-                            <label for="fileFoto" class="form-label">Insira aqui sua foto</label>
+                            <label for="fileFoto" class="form-label">Atualize aqui sua foto</label>
                             <input type="file" id="fileFoto" onchange="toBase64()" capture="user" accept="image/*"/>
                             <figure class="personal-figure">
-                                <img src="<%=(foto == undefined)?'/img/user.jpg':foto%>" id="foto" class="personal-avatar" alt="foto">
+                                <img src="<%=foto%>" id="foto" class="personal-avatar" alt="foto">
                                 <figcaption class="personal-figcaption">
                                     <img
                                         src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png">
@@ -62,17 +71,21 @@
                         Ok
                     </div>
                 </div>
-                <div class="col-6 mt-3">
-                    <label for="senha" class="form-label">Senha</label>
-                    <input type="password" class="form-control" name="senha" onchange="valid()" id="senha" placeholder="Informe sua senha" required/>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <label for="senha" class="form-label">Senha atual</label>
+                    <input type="password" class="form-control" name="senhaAtual" id="senhaAtual" placeholder="Informe sua senha atual"/>
                 </div>
-                <div class="col-6 mt-3">
-                    <label for="confirm" class="form-label">Confirme sua senha</label>
-                    <input type="password" class="form-control" onchange="valid()" id="confirm" name="confirm" placeholder="Repita sua senha" required/>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <label for="senha" class="form-label">Nova senha</label>
+                    <input type="password" class="form-control" name="senha" id="senha" placeholder="Informe sua senha"/>
+                </div>
+                <div class="col-md-4 col-sm-6 mt-3">
+                    <label for="confirm" class="form-label">Confirme nova senha</label>
+                    <input type="password" class="form-control" id="confirm" name="confirm" placeholder="Repita sua senha"/>
                 </div>
                 
                 <div class="mb-4 d-grid">
-                    <button class="mt-5 btn btn-primary" disabled id="submit" type="submit">Cadastrar</button>
+                    <button class="mt-5 btn btn-primary" id="submit" type="submit">Atualzar</button>
                 </div>
             </div>
         </form>
@@ -80,19 +93,6 @@
 </main>
 
 <%-include ("../partials/footer.ejs")%>
-
-<script>
-    function valid() {
-        var senha = document.getElementById("senha").value
-        var confirm = document.getElementById("confirm")
-
-        if (senha == confirm.value) {
-           document.getElementById("submit").disabled = false
-        } else {
-           document.getElementById("submit").disabled = true
-        }
-    }
-</script>
 
 <script>
 // Example starter JavaScript for disabling form submissions if there are invalid fields
