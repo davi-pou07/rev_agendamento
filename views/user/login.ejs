@@ -1,0 +1,37 @@
+
+<%-include ("../partials/head.ejs")%>
+<%-include ("../partials/nav.ejs")%>
+<main>
+    <div class="container">
+        <%if(erro){%>
+            <div class="alert alert-danger" role="alert">
+                <%=erro%>
+            </div>
+        <%}%>
+        <div class="row">
+            <div class="container mt-5"><h1 class="text-center">Login de Usuario</h1></div>
+            <div class="card position-absolute top-50 start-50 translate-middle" style="width: 30rem;">
+                <form class="card-body mt-4 needs-validation" novalidate method="POST" action="/user/login">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Endereço de email</label>
+                        <input type="email" class="form-control" id="email" value="<%=email%>" name="email" placeholder="Informe aqui o seu e-mail!" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senha" name="senha" placeholder="Informe aqui a sua Senha" required/>
+                    </div>
+                    <div class="mb-3">
+                        <a href="/user/registrar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                          </svg> Fazer Cadastro</a>
+                    </div>
+                    <div class="row">
+                        <button class="col-8 mx-auto btn btn-success mt-4" type="submit" >Fazer Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>  
+</main>
+
+<%-include ("../partials/scripts.ejs")%>

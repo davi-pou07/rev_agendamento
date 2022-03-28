@@ -4,18 +4,26 @@ const express = require("express")
 const app = express()
 
 const session = require("express-session")
+const cookieParser = require("cookie-parser")
+const flash = require('express-flash')
 const bodyParser = require("body-parser")
-const moment = require('moment');
-const { Op } = require("sequelize");
+
+const User = require("./Database/User")
+
+const userController = require("./controller/userController")
 
 //databases
 const path = require('path')
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 6060
 
+app.use(cookieParser("asdfasfdasfaz"))
 app.use(session({
     secret: "sdfsdfsdfgdfgfgh",
-    cookie: { maxAge: 3600000 }
+    resave:false,
+    saveUninitialized:true,
+    cookie: { maxAge: 7200000 }
 }))
+app.use(flash())
 
 
 //usar o EJS como view engine | renderizador de html
@@ -26,6 +34,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 //Carregamento do bodyPerser
 app.use(bodyParser.urlencoded({ extended: false, limit: "50mb" }))
 app.use(bodyParser.json({ limit: '50mb' }))
+
+app.use("/",userController)
 
 app.get("/", async(req, res) => {
    res.render("index")

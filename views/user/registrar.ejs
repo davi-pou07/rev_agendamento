@@ -1,0 +1,129 @@
+<%-include ("../partials/head.ejs")%>
+<%-include ("../partials/nav.ejs")%>
+<main>
+    <div class="container">
+        <%if(erro != undefined){%>
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+            <div>
+              <%=erro%>
+            </div>
+        </div>
+        <%}%>
+
+        <div class="py-5 text-center">
+            <h2>Cadastro de usuario</h2>
+        </div>
+        <div class="row g-5">
+            <div class="col-md-5 col-lg-4 order-md-last">
+                <div class="card mt-4">
+                    <div class="card-body text-center">
+                        <h2>Ja é Cadastrado?</h2>
+                        <p class="lead">Faça o login na sua conta.</p>
+                        <a href="/login" class="btn btn-success">Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 col-lg-8">
+                <form action="/user/registrar" method="post" class="needs-validation" id="form" novalidate>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="personal-image">
+                                <label class="label">
+                                    <input type="hidden" name="foto" value="<%=foto%>" id="fotoBase64">
+                                    <label for="fileFoto" class="form-label">Insira aqui sua foto</label>
+                                    <input type="file" id="fileFoto" onchange="toBase64()" capture="user" accept="image/*"/>
+                                    <figure class="personal-figure">
+                                        <img src="<%=(foto == undefined)?'/img/user.jpg':foto%>" id="foto" class="personal-avatar" alt="foto">
+                                        <figcaption class="personal-figcaption">
+                                            <img
+                                                src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png">
+                                        </figcaption>
+                                    </figure>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="firstName" class="form-label">Nome Completo</label>
+                            <input value="<%=nome%>" type="text" class="form-control" id="nome" name="nome" placeholder="Informe seu Nome e Sobrenome" required>
+                            <div class="invalid-feedback">
+                                Dados vazios
+                            </div>
+                            <div class="valid-feedback">
+                                Ok
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="email" class="form-label">Email</label>
+                            <input value="<%=email%>" type="email" class="form-control" id="email" name="email" placeholder="Informe o seu Endereço de Email" required/>
+                            <div class="invalid-feedback">
+                                Dados vazios
+                            </div>
+                            <div class="valid-feedback">
+                                OK
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-4">
+                            <label for="numero" class="form-label">Celular</label>
+                            <input value="<%=numero%>" type="text" class="form-control" onkeypress="$(this).mask('(00) 00000-0000')" name="numero" id="numero" maxlength="15" required/>
+                            <div class="invalid-feedback">
+                                Dados vazios
+                            </div>
+                            <div class="valid-feedback">
+                                Ok
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label for="senha" class="form-label">Senha</label>
+                            <input type="password" class="form-control" name="senha" onchange="valid()" id="senha" placeholder="Informe sua senha" required/>
+                        </div>
+                        <div class="col-6">
+                            <label for="confirm" class="form-label">Confirme sua senha</label>
+                            <input type="password" class="form-control" onchange="valid()" id="confirm" name="confirm" placeholder="Repita sua senha" required/>
+                        </div>
+                        
+                        <div class="mb-4 d-grid">
+                            <button class="mt-5 btn btn-primary" disabled id="submit" type="submit">Cadastrar</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%-include ("../partials/footer.ejs")%>
+
+<script>
+    function valid() {
+        var senha = document.getElementById("senha").value
+        var confirm = document.getElementById("confirm")
+
+        if (senha == confirm.value) {
+           document.getElementById("submit").disabled = false
+        } else {
+           document.getElementById("submit").disabled = true
+        }
+    }
+</script>
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+    function toBase64() {
+    var filesSelected = document.getElementById("fileFoto").files;
+    if (filesSelected.length > 0) {
+        var fileToLoad = filesSelected[0];
+        var fileReader = new FileReader();
+        fileReader.onload = function (fileLoadedEvent) {
+            var srcData = fileLoadedEvent.target.result; // <--- data: base64
+            var base64 = document.getElementById("fotoBase64").value = srcData
+            var foto = document.getElementById("foto").src = srcData
+        }
+        fileReader.readAsDataURL(fileToLoad);
+    }
+}
+</script>
+<%-include ("../partials/scripts.ejs")%>
