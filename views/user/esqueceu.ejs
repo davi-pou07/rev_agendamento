@@ -1,0 +1,45 @@
+
+<%-include ("../partials/head.ejs")%>
+<main>
+    <div class="container-fluid">
+        <%if(erro){%>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                  <%=erro%>
+                </div>
+            </div>
+        <%}%>
+        <div class="text-center my-md-5 my-4">
+            <span class="fs-1">Esqueceu a senha?</span>
+            <p>Enviaremos um e-mail com uma nova senha para que retorne a ter seu acesso em nossa plataforma</p>
+        </div>
+        <form action="/user/esqueceu" method="post">
+            <div class="row justify-content-center">
+                <div class="col-lg-3 col-md-5 col-8">
+                    <label for="email" class="form-label">Informe seu E-mail</label>
+                    <input type="email" name="email" placeholder="Ex: seuemail@seuemail.com" id="email"
+                        class="form-control">
+                </div>
+            </div>
+        
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-3 col-md-5 col-8">
+                    <button type="submit" class="btn btn-dark form-control">Continuar</button>
+                </div>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <p>Lembrou sua senha? <a href="/user/login">Login</a></p>
+            <p class="mt-2">Não tem conta? <a href="/user/registrar">Cadastre-se</a></p>
+        </div>
+    </div>
+</main>
+
+<%-include ("../partials/scripts.ejs")%>
+
+
+
+
+       
+  

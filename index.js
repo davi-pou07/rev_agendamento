@@ -9,6 +9,7 @@ const flash = require('express-flash')
 const bodyParser = require("body-parser")
 
 const User = require("./Database/User")
+const RecuperaSenha = require("./Database/RecuperaSenha")
 
 const userController = require("./controller/userController")
 const adminController = require("./controller/adminController")

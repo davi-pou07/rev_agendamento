@@ -31,71 +31,39 @@
             </ul>
           </div>
           <div class="btn-group d-flex" id="divLogin">
-            <a href="/user/login" class="btn btn-outline-success">Login</a>
-            <a href="/user/registrar" class="btn btn-primary ms-2">Cadastre-se</a>
+            <a href="/user/login" class="btn btn-outline-success btn-sm">Login</a>
+            <a href="/user/registrar" class="btn btn-primary ms-2 btn-sm">Cadastre-se</a>
           </div>
 
           <div class="d-flex personal-image d-none" role="navigation" id="divPerfil">
             <label class="label">
                 <figure class="personal-figure">
-                        <ul class="navbar-nav me-md-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link text-white dropdown-toggle" href="#" id="dropTogle" role="button"
-                                    id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="/img/user.jpg" class="personal-avatar" id="imgCli" alt="avatar">
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-start dropdown-menu-dark"
-                                    aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item text-center" id="userNome">Usuario</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="/usuario/editar/">Editar</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <!-- <li>
-                                        <a class="dropdown-item" href="/usuario/historico/">Historico de
-                                            Comp.</a>
-                                    </li> -->
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" id="aUsuarios" href="/user/logout">Sair</a></li>
-
-                                </ul>
-                            </li>
-                        </ul>
+                  <a class="nav-link text-white dropdown-toggle dropstart" href="#" id="dropTogle" role="button"
+                      id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="/img/user.jpg" class="personal-avatar" id="imgCli" alt="avatar">
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-xl-start dropdown-menu-dark"
+                      aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item text-center" id="userNome">Usuario</a></li>
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+                      <li>
+                          <a class="dropdown-item" href="/user/editar/">Editar</a>
+                      </li>
+                      <!-- <li>
+                          <a class="dropdown-item" href="/usuario/historico/">Historico de
+                              Comp.</a>
+                      </li> -->
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+                      <li><a class="dropdown-item" id="aUsuarios" href="/user/logout">Sair</a></li>
+                  </ul>
                 </figure>
             </label>
         </div>
-
         </div>
       </nav>
-      <script>
-        function usuarioLogado() {
-          console.log("REALIZANDO CONSULTA")
-          var divLogin = document.getElementById("divLogin")
-          var divPerfil = document.getElementById("divPerfil")
-          axios.get("/usuario/logado").then(resp =>{
-            if (resp.data.erro == undefined) {
-              var usuario = resp.data.user
-              document.getElementById("imgCli").src = (usuario.foto != undefined)?usuario.foto:'/img/user.jpg'
-              var nome = usuario.nome.split(" ")
-              nome = `${nome[0]}(${usuario.id})}`
-              document.getElementById("userNome").innerHTML = nome
-
-              divLogin.classList.add('d-none')
-              divPerfil.classList.remove("d-none")
-
-            } else {
-              divLogin.classList.remove('d-none')
-              divPerfil.classList.add("d-none")
-            }
-          })
-        }
-      </script>
     </header>
     

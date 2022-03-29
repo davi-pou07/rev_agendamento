@@ -1,0 +1,38 @@
+<%-include ("../partials/head.ejs")%>
+<main>
+    <div class="container-fluid">
+        <%if(erro){%>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                  <%=erro%>
+                </div>
+            </div>
+        <%}%>
+        <div class="text-center my-md-5 my-4">
+            <span class="fs-1">Alteração de Senha</span>
+        </div>
+        <form action="/user/alterar" method="post">
+            <div class="row justify-content-center">
+                <div class="col-lg-3 col-md-5 col-8">
+                    <label for="senha" class="form-label">Insira sua Nova Senha:</label>
+                    <input type="password" name="senha" id="senha" class="form-control">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-3 col-md-5 col-8">
+                    <label for="confirm" class="form-label">Confirme sua Nova Senha:</label>
+                    <input type="password" name="confirm" id="confirm" class="form-control">
+                </div>
+            </div>
+
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-3 col-md-5 col-8">
+                    <button id="btnLogar" type="submit" class="btn btn-dark form-control">Continuar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<%-include ("../partials/scripts.ejs")%>
