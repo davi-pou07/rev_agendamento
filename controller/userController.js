@@ -145,6 +145,11 @@ router.post("/user/login",async(req,res)=>{
    
 })
 
+router.get("/user/logout", (req, res) => {
+    req.session.user = undefined
+    res.redirect("/")
+})
+
 //==========================FIM LOGIN DE USUARIO==========================
 
 
@@ -234,5 +239,23 @@ router.post("/user/editar",auth,async(req, res) => {
 })
 
 //==========================FIM EDIÇAÕ DE USUARIO==========================
+
+//==========================LOG DE USUARIO==========================
+
+router.get("/usuario/logado",async(req,res)=>{
+    var userId = req.session.user
+    if (userId != undefined) {
+        var user = await User.findOne({where:{id:userId,status:true}})
+        if (user != undefined) {
+            res.json({user:{id:user.id,nome:user.nome,foto:user.foto}})
+        } else {
+            res.json({erro:"Usuario não identificado"})
+        }
+    } else {
+        res.json({erro:"Gentileza realize o login"})
+    }
+})
+
+//==========================FIM LOG DE USUARIO==========================
 
 module.exports = router
