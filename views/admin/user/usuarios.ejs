@@ -1,4 +1,4 @@
-<%-include ('../partials/head.ejs')%>
+<%-include ('../../partials/head.ejs')%>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <style>
     .personal-figure {
@@ -10,7 +10,7 @@
     height: 60px;
   }
 </style>
-<%-include ('../partials/navAdmin.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Usuarios/Clientes</h1>
@@ -89,7 +89,7 @@
         </div>
       </div>
     </main>
-<%-include ('../partials/footerAdmin.ejs')%>
+<%-include ('../../partials/footerAdmin.ejs')%>
 <script>
     function editar(userId) {
         axios.get(`/api/usuario/${userId}`).then(resp =>{
@@ -128,4 +128,4 @@
         })
     }
 </script>
-<%-include ('../partials/scripts.ejs')%>
+<%-include ('../../partials/scripts.ejs')%>

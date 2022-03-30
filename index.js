@@ -10,6 +10,8 @@ const bodyParser = require("body-parser")
 
 const User = require("./Database/User")
 const RecuperaSenha = require("./Database/RecuperaSenha")
+const Funcionario = require("./Database/Funcionario")
+const Horario = require("./Database/Horario")
 
 const userController = require("./controller/userController")
 const adminController = require("./controller/adminController")
@@ -17,6 +19,8 @@ const apiController = require("./controller/apiController")
 //databases
 const path = require('path')
 const PORT = process.env.PORT || 6060
+
+const authAdm = require("./middlewares/authAdm")
 
 app.use(cookieParser("asdfasfdasfaz"))
 app.use(session({
@@ -48,12 +52,10 @@ app.get("/", async(req, res) => {
    res.render("index")
 })
 
-app.get("/admin", async(req, res) => {
-    if (await usuarioAdmin(req.session.user) != undefined) {
-        res.render("admin/index")
-    } else {
-        res.redirect("/")
-    }
+app.get("/admin",authAdm, async(req, res) => {
+    var erro = req.flash('erro')
+    erro = (erro == undefined || erro.length == 0)?undefined:erro
+    res.render("admin/index",{erro:erro})
  })
 
 app.listen(PORT, () => {

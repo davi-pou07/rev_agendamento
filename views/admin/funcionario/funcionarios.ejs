@@ -1,0 +1,198 @@
+<%-include ('../../partials/head.ejs')%>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<style>
+    .personal-figure {
+    width: 60px;
+    height: 60px;
+  }
+  .personal-avatar {
+    width: 60px;
+    height: 60px;
+  }
+</style>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Funcionarios</h1>
+      </div>
+
+      <ul class="nav my-4">
+        <li class="nav-item">
+          <button data-bs-toggle="modal" data-bs-target="#modalAdicionar" class="btn btn-success"><span data-feather="plus"></span> Adicionar</button>
+        </li>
+      </ul>
+
+      <div class="table-responsive">
+        <table class="table" id="table">
+            <thead >
+                <tr class="mt-4">
+                    <th class="text-center">#</th>
+                    <th class="text-center">Apelido</th>
+                    <th class="text-center">Ig</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Data Criação</th>
+                    <th class="text-center">Cadastro</th>
+                    <th class="text-center">Horarios</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%if(funcionarios.length > 0){%>
+                    <%funcionarios.forEach(funcionario =>{%>
+                        <tr>
+                            <td class="align-middle text-center"><%=funcionario.id%></td>
+                            <td class="align-middle text-center"><%=funcionario.apelido%></td>
+                            <td class="align-middle text-center text-nowrap">@<%=funcionario.ig%></td>
+                            <td class="align-middle text-center"><%=(funcionario.status == true)?'Ativo':'Inativo'%></td>
+                            <td class="align-middle text-center"><%=funcionario.dataCri%></td>
+                            <td class="align-middle text-center"><%=funcionario.userId%></td>
+                            <td class="align-middle text-center"><a href="/admin/funcionario/horarios/<%=funcionario.id%>" class="btn btn-warning"><span data-feather="watch"></span>Horarios</a></td>
+                            <td class="align-middle text-center"><button  value="<%=funcionario.id%>" onclick="editar(this.value)" data-bs-toggle="modal" data-bs-target="#modalEdit" class="btn btn-success"><span data-feather="edit"></span>Editar</button></td>
+                        </tr>
+                    <%})%>
+                <%}%>
+            </tbody>
+        </table>
+      </div>
+
+
+      <div class="modal fade" id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditLabel">Editar cadastro de funcionario</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-12 my-3">
+                  <label for="apelidoEdit" class="form-label">Alterar apelido</label>
+                  <input type="text" class="form-control" name="apelidoEdit" id="apelidoEdit">
+                </div>
+                <div class="col-12">
+                    <label for="igEdit" class="form-label">Alterar ig</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                        <input type="text" class="form-control" id="igEdit" name="igEdit">
+                    </div>  
+                </div>
+                <div class="col-12">
+                  <label for="statusEdit" class="form-label">Status</label>
+                  <select name="statusEdit" class="form-select" id="statusEdit">
+                    <option value="true">Ativo</option>
+                    <option value="false">Inativo</option>
+                  </select>
+              </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="fecharModar" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" id="btnSalvar" onclick="salvar(this.value)" class="btn btn-primary">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="modalAdicionar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAdicionarLabel">Cadastrar um novo funcionario</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row my-4">
+                <div class="col-12">
+                  <label for="userId" class="form-label">Informe o usuario</label>
+                  <select class="form-select" id="userId" name="userId">
+                        <option value=""></option>
+                        <%if(usuarios.length >0){%>
+                        <%usuarios.forEach(user =>{%>
+                            <option value="<%=user.id%>"><%=user.nome%>(<%=user.id%>)</option>
+                        <%})%>
+                        <%}else{%>
+                            <option value="">NECESSARIO CADASTRAR USUARIO ADMINISTRADOR</option>
+                        <%}%>
+                  </select>
+                </div>
+                <div class="col-12 my-3">
+                  <label for="apelido" class="form-label">Insira o apelido</label>
+                  <input type="text" class="form-control" name="apelido" id="apelido">
+                </div>
+                <div class="col-12">
+                    <label for="ig" class="form-label">Insira o ig</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                        <input type="text" class="form-control" id="ig" name="ig">
+                    </div>  
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" class="btn btn-primary" onclick="adicionar()">Salvar</button>
+            </div>
+        </div>
+      </div>
+
+    </main>
+
+<%-include ('../../partials/footerAdmin.ejs')%>
+<script>
+    function editar(funcionarioId) {
+        axios.get(`/api/funcionario/${funcionarioId}`).then(resp =>{
+            if (resp.data.erro == undefined) {
+                var funcionario = resp.data.funcionario
+
+                var apelidoEdit = document.getElementById("apelidoEdit")
+                apelidoEdit.value = funcionario.apelido
+
+                var igEdit = document.getElementById("igEdit")
+                igEdit.value = funcionario.ig
+
+                var statusEdit = document.getElementById("statusEdit")
+                statusEdit.value = funcionario.status
+
+                var btnSalvar = document.getElementById("btnSalvar")
+                btnSalvar.value = funcionario.id
+            } else {
+                document.getElementById("fecharModar").click()
+                alert(resp.data.erro)
+            }
+        })
+    }
+
+    function salvar(funcionarioId) {
+        var apelidoEdit = document.getElementById("apelidoEdit").value
+        var igEdit = document.getElementById("igEdit").value
+        var statusEdit = document.getElementById("statusEdit").value
+        axios.post(`/api/funcionario/`,{funcionarioId:funcionarioId,status:statusEdit,ig:igEdit,apelido:apelidoEdit}).then(resp =>{
+            if (resp.data.erro == undefined) {
+                alert(resp.data.resp)
+                document.location.reload()
+            } else {
+                document.getElementById("fecharModar").click()
+                alert(resp.data.erro)
+            }
+        })
+    }
+
+    function adicionar() {
+      var userId = document.getElementById("userId").value
+      var apelido = document.getElementById("apelido").value
+      var ig = document.getElementById("ig").value
+      if (userId == undefined || userId == '' || apelido == undefined || apelido == '') {
+        alert("Campos importantes não podem ficar vazios")
+      } else {
+        axios.post("/api/funcionario/registrar",{userId:userId,apelido:apelido,ig:ig}).then(resp=>{
+          if (resp.data.erro == undefined) {
+            alert(resp.data.resp)
+            document.location.reload()
+          } else {
+            alert(resp.data.erro)
+          }
+        })
+      }
+    }
+</script>
+<%-include ('../../partials/scripts.ejs')%>

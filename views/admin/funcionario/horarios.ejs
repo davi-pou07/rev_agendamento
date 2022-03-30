@@ -1,0 +1,107 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Horarios - <%=funcionario.apelido%></h1>
+        </div>
+        <div class="row" id="horarios">
+            <%horarios.forEach(horario =>{%>
+                    <div class="col-sm-4">
+                        <label for="diaDe<%=horario.id%>" class="form-label">De</label>
+                        <select id="diaDe<%=horario.id%>" disabled class="form-select">
+                            <option <%=(horario.de == 1)?'selected':''%> value="1">Domingo</option>
+                            <option <%=(horario.de == 2)?'selected':''%> value="2">Segunda</option>
+                            <option <%=(horario.de == 3)?'selected':''%> value="3">Terça</option>
+                            <option <%=(horario.de == 4)?'selected':''%> value="4">Quarta</option>
+                            <option <%=(horario.de == 5)?'selected':''%> value="5">Quinta</option>
+                            <option <%=(horario.de == 6)?'selected':''%> value="6">Sexta</option>
+                            <option <%=(horario.de == 7)?'selected':''%> value="7">Sabado</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="diaAte<%=horario.id%>" class="form-label">Até</label>
+                        <select id="diaAte<%=horario.id%>" disabled class="form-select">
+                            <option <%=(horario.ate == 1)?'selected':''%> value="1">Domingo</option>
+                            <option <%=(horario.ate == 2)?'selected':''%> value="2">Segunda</option>
+                            <option <%=(horario.ate == 3)?'selected':''%> value="3">Terça</option>
+                            <option <%=(horario.ate == 4)?'selected':''%> value="4">Quarta</option>
+                            <option <%=(horario.ate == 5)?'selected':''%> value="5">Quinta</option>
+                            <option <%=(horario.ate == 6)?'selected':''%> value="6">Sexta</option>
+                            <option <%=(horario.ate == 7)?'selected':''%> value="7">Sabado</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 col-9">
+                        <label for="horario<%=horario.id%>" class="form-label text-nowrap">As <span class="text-muted">Ex:08:00-12:00</span></label>
+                        <input type="text" class="form-control horarios" disabled id="horario<%=horario.id%>" value="<%=horario.as%>" onkeyup="$(this).mask('00:00-00:00')">
+                    </div>
+                    <div class="col-1 mt-4">
+                        <button class="btn btn-danger btn-sm mt-1" value="<%=horario.id%>" id="btnExluir" onclick="excluirHorario(this.value)"><span data-feather="trash-2"></span></button>
+                    </div>
+            <%})%>
+            <div class="col-sm-4">
+                <label for="diaDe" class="form-label">De</label>
+                <select id="diaDe" class="form-select">
+                    <option value=""></option>
+                    <option value="1">Domingo</option>
+                    <option value="2">Segunda</option>
+                    <option value="3">Terça</option>
+                    <option value="4">Quarta</option>
+                    <option value="5">Quinta</option>
+                    <option value="6">Sexta</option>
+                    <option value="7">Sabado</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label for="diaAte" class="form-label">Até</label>
+                <select name="" id="diaAte" class="form-select">
+                    <option value=""></option>
+                    <option value="1">Domingo</option>
+                    <option value="2">Segunda</option>
+                    <option value="3">Terça</option>
+                    <option value="4">Quarta</option>
+                    <option value="5">Quinta</option>
+                    <option value="6">Sexta</option>
+                    <option value="7">Sabado</option>
+                </select>
+            </div>
+            <div class="col-sm-3 col-9">
+                <label for="as" class="form-label text-nowrap">As <span class="text-muted">Ex:08:00-12:00</span></label>
+                <input type="text" class="form-control" id="as" onkeyup="$(this).mask('00:00-00:00')">
+            </div>
+        </div>
+        <div class="row justify-content-md-center mt-5">
+            <div class="col-6">
+                <button class="btn btn-success form-control" onclick="adicionaHorario()"><span data-feather="plus"></span></button>
+            </div>
+        </div>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<script>
+    function adicionaHorario() {
+        var diaDe = document.getElementById(`diaDe`).value
+        var diaAte = document.getElementById(`diaAte`).value
+        var as = document.getElementById(`as`).value
+
+        if (diaDe != '' && diaAte != '' && as != '') {
+            
+        } else {
+            
+        }
+        
+     
+    }
+
+
+    function excluirHorario(valor) {
+        var quantidadeHorarios = document.getElementById("quantidadeHorarios")
+        quantidadeHorarios.value = parseInt(quantidadeHorarios.value) - 1
+
+        var diaDe = document.getElementById(`diaDe${valor}`)
+        var diaAte = document.getElementById(`diaAte${valor}`)
+        var horario = document.getElementById(`horario${valor}`)
+        var btnExluir = document.getElementById(`btnExluir${valor}`)
+
+        diaDe.remove()
+    }
+</script>
+<%-include ('../../partials/scripts.ejs')%>
