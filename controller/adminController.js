@@ -8,6 +8,7 @@ const auth = require("../middlewares/auth")
 const moment = require("moment")
 const usuarioAdmin = require("../functions/usuarioAdmin")
 
+//=============== USUARIOS =======================
 
 router.get("/usuarios",auth,async(req,res)=>{
     var userId = req.session.user
@@ -23,6 +24,24 @@ router.get("/usuarios",auth,async(req,res)=>{
         res.redirect("/")
     }
 })
+//=============== FIM USUARIOS =======================
+
+
+//=============== FUNCIONARIOS =======================
+
+
+router.get("/funcionarios",auth,async(req,res)=>{
+    var userId = req.session.user
+    var usuario = await usuarioAdmin(userId)
+    if (usuario != undefined) {
+       
+    } else {
+        res.redirect("/")
+    }
+})
+
+//=============== FIM FUNCIONARIOS =======================
+
 
 
 module.exports = router
