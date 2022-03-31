@@ -26,7 +26,7 @@ const Horario = connection.define('horarios',{
 
 })
 
-// Horario.sync({alter: true }).then(()=>{
+// Horario.sync({force: true }).then(()=>{
 //     console.log("Tabela Horario criada")
 // })
 

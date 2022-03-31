@@ -8,6 +8,7 @@ const auth = require("../middlewares/auth")
 const moment = require("moment")
 const usuarioAdmin = require("../functions/usuarioAdmin")
 const Funcionario = require('../Database/Funcionario')
+const Horario = require('../Database/Horario')
 
 //================USUARIOS=====================
 
@@ -160,6 +161,39 @@ router.post("/funcionario",async(req,res)=>{
 
 //================FIM FUNCIONARIOS=====================
 
-
+//================HORARIO=====================
+    router.post("/horario/adicionar",async(req,res)=>{
+        if (await usuarioAdmin(req.session.user) != undefined) {
+            var {de,ate,as,funcionarioId} = req.body
+            if (de != '' && de != undefined && ate != '' && ate != undefined && as != '' && as != undefined && funcionarioId != '' && funcionarioId != undefined) {
+                    var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
+                    if (funcionario != undefined) {
+                        var exist = await Horario.findOne({where:{funcionarioId:funcionario.id,de:de,ate:ate,as:as,status:true}})
+                        if (exist == undefined) {
+                            Horario.create({
+                                funcionarioId:funcionario.id,
+                                de:de,
+                                ate:ate,
+                                as:as,
+                                status:true
+                            }).then(()=>{
+                                res.json({resp:"Foi adicionado um novo horario"})
+                            }).catch(err =>{
+                                res.json({erro:"Ocorreu um erro ao salvar, tente novamente"})
+                            })
+                        } else {
+                            res.json({erro:"Horario ja cadastrado para esse funcionario"})
+                        }
+                    } else {
+                        res.json({erro:"Funcionario não identificado ou status inativo"})
+                    }
+            } else {
+                res.json({erro:`Dados inválidos`}) 
+            }
+        } else {
+            res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
+        }
+    })
+//================FIM HORARIO=====================
 
 module.exports = router

@@ -1,353 +1,427 @@
 <%-include ("./partials/head.ejs")%>
-<%-include ("./partials/nav.ejs")%>
-<!-- <main>
-  <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="/img/modelo-de-banner-de-barbearia_23-2148818937.webp" class="bd-placeholder-img" width="100%" height="100%">
+  <%-include ("./partials/nav.ejs")%>
+    <main>
+      <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+            aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/img/modelo-de-banner-de-barbearia_23-2148818937.webp" class="bd-placeholder-img" width="100%"
+              height="100%">
+          </div>
+          <div class="carousel-item">
+            <img
+              src="/img/modelo-de-banner-de-corte-de-cabelo-para-design-de-capa-de-facebook-de-salao-de-beleza-de-barbearia_135461-448.webp"
+              class="bd-placeholder-img" width="100%" height="100%">
+          </div>
+          <div class="carousel-item">
+            <img src="/img/barbershop.webp" class="bd-placeholder-img" width="100%" height="100%">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Antes</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Depois</span>
+        </button>
       </div>
-      <div class="carousel-item">
-        <img src="/img/modelo-de-banner-de-corte-de-cabelo-para-design-de-capa-de-facebook-de-salao-de-beleza-de-barbearia_135461-448.webp" class="bd-placeholder-img" width="100%" height="100%">
-      </div>
-      <div class="carousel-item">
-        <img src="/img/barbershop.webp" class="bd-placeholder-img" width="100%" height="100%">
-      </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Antes</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Depois</span>
-    </button>
-  </div>
 
-  <div class="container" id="agendamentos">
-    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">Social</h4>
+      <div class="container" id="agendamentos">
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">Social</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$12</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>30 min</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">Degradê Maquina</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$15</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>1hr</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm border-primary">
+              <div class="card-header py-3 text-white bg-primary border-primary">
+                <h4 class="my-0 fw-normal">Degradê Navalhado</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$15</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>1hr e 30 min</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">Barba</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$6</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>15 min</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">Sobrancelha</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$4</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>10 min</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">Pezinho</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">R$5</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Tempo de duração</li>
+                  <li>10 min</li>
+                </ul>
+                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="album py-5 bg-light" id="fotos">
+        <div class="container">
+
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card shadow-sm">
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                  xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                  preserveAspectRatio="xMidYMid slice" focusable="false">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+
+                <div class="card-body">
+                  <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-success"> <i
+                          data-feather="thumbs-up"></i>35</button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger"><i
+                          data-feather="thumbs-down"></i>2</button>
+                    </div>
+                    <small class="text-muted">26/03/2022</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container mt-3" id="horarios">
+        <div class="card">
+          <div class="card-header">
+            <h1>Horarios</h1>
+            <div class="form-floating mb-3">
+              <input type="date" id="data" class="form-control form-control-lg">
+              <label for="data">Informe uma data</label>
+            </div>
+            <span class="badge bg-success">Livre</span>
+            <span class="badge bg-danger">Ocupado</span>
+            <span class="badge bg-warning">Pausa</span>
           </div>
           <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$12</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>30 min</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">Degradê Maquina</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$15</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>1hr</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm border-primary">
-          <div class="card-header py-3 text-white bg-primary border-primary">
-            <h4 class="my-0 fw-normal">Degradê Navalhado</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$15</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>1hr e 30 min</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
+            <div class="row">
+              <div class="col-12">
+                <h3>Manhã</h3>
+                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck1">09:00</label>
 
+                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck2">09:30</label>
 
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">Barba</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$6</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>15 min</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">Sobrancelha</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$4</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>10 min</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">Pezinho</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">R$5</h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Tempo de duração</li>
-              <li>10 min</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Agendar</button>
-          </div>
-        </div>
-      </div>
+                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck3">10:00</label>
+              </div>
 
-    </div>
-  </div>
+              <div class="col-12 my-2">
+                <h3>Tarde</h3>
+                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck1">13:00</label>
 
+                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck2">13:30</label>
 
-  <div class="album py-5 bg-light" id="fotos">
-    <div class="container">
+                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck3">14:00</label>
+              </div>
 
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+              <div class="col-12 my-2">
+                <h3>Noite</h3>
+                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck1">18:00</label>
 
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
+                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck2">18:30</label>
 
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
+                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                <label class="btn btn-outline-success" for="btncheck3">19:00</label>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-
-            <div class="card-body">
-              <p class="card-text">Descrição do corte, valor, @, frase motivacional ...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-success"> <i data-feather="thumbs-up"></i>35</button>
-
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i data-feather="thumbs-down"></i>2</button>
-                </div>
-                <small class="text-muted">26/03/2022</small>
-              </div>
-            </div>
+          <div class="card-footer">
+            <button class="btn btn-primary">Agendar</button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="container mt-3" id="horarios">
-    <div class="card">
-      <div class="card-header">
-        <h1>Horarios</h1>
-        <div class="form-floating mb-3">
-          <input type="date" id="data" class="form-control form-control-lg">
-          <label for="data">Informe uma data</label>
-        </div>
-        <span class="badge bg-success">Livre</span>
-        <span class="badge bg-danger">Ocupado</span>
-        <span class="badge bg-warning">Pausa</span>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-12">
-            <h3>Manhã</h3>
-            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck1">09:00</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck2">09:30</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck3">10:00</label>
-          </div>
-
-          <div class="col-12 my-2">
-            <h3>Tarde</h3>
-            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck1">13:00</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck2">13:30</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck3">14:00</label>
-          </div>
-
-          <div class="col-12 my-2">
-            <h3>Noite</h3>
-            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck1">18:00</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck2">18:30</label>
-          
-            <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-            <label class="btn btn-outline-success" for="btncheck3">19:00</label>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-primary">Agendar</button>
-      </div>
-    </div>
-  </div>
-</main> -->
-
-<%-include ("./partials/footer.ejs")%>
-<%-include ("./partials/scripts.ejs")%>
-
+    </main>
+    <%-include ("./partials/footer.ejs")%>
+      <%-include ("./partials/scripts.ejs")%>
