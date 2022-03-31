@@ -89,6 +89,8 @@ router.post("/user/registrar", async (req, res) => {
 
         var salt = bcrypt.genSaltSync(10)
         var hash = bcrypt.hashSync(senha, salt)
+        
+        var isAdmin = (await User.findOne({where:{status:true}}) != undefined)?false:true
 
         User.create({
             nome: nome,
@@ -96,7 +98,7 @@ router.post("/user/registrar", async (req, res) => {
             senha: hash,
             foto: foto,
             status: true,
-            isAdmin: false,
+            isAdmin: isAdmin,
             numero: numero
         }).then(user => {
             req.session.user = user.id

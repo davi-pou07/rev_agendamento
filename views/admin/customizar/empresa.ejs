@@ -1,0 +1,99 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><%=(empresa != null)?empresa.nome:''%></h1>
+        <%if(erro){%>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+              <div>
+                <%=erro%>
+              </div>
+            </div>
+          <%}%>
+          <%if(msm){%>
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    <%=msm%>
+                </div>
+              </div>
+          <%}%>
+      </div>
+    <form action="/admin/empresa" method="post" class="needs-validation" id="form" novalidate>
+        <div class="row justify-content-center">
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <div class="personal-image">
+                    <label class="label">
+                        <input type="hidden" name="logo" value="<%=(empresa != null)?empresa.logo:''%>" id="fotoBase64">
+                        <label for="fileFoto" class="form-label">Insira a logo</label>
+                        <input type="file" id="fileFoto" onchange="toBase64()" capture="user" accept="image/*"/>
+                        <figure class="personal-figure">
+                            <img src="<%=(empresa != null)?empresa.logo:'/img/user.jpg'%>" id="foto" class="personal-avatar" alt="foto">
+                            <figcaption class="personal-figcaption">
+                                <img
+                                    src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png">
+                            </figcaption>
+                        </figure>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-8 mt-5">
+                <label for="firstName" class="form-label"><span data-feather="home"></span> Nome Empresa</label>
+                <input value="<%=(empresa != null)?empresa.nome:''%>" type="text" class="form-control" id="nome" name="nome" placeholder="Informe nome da empresa" required>
+                <div class="invalid-feedback">
+                    Dados vazios
+                </div>
+                <div class="valid-feedback">
+                    Ok
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <label for="email" class="form-label"><span data-feather="mail"></span> Email</label>
+                <input value="<%=(empresa != null)?empresa.email:''%>" type="email" class="form-control" id="email" name="email" placeholder="Informe o seu Endereço de Email" required/>
+                <div class="invalid-feedback">
+                    Dados vazios
+                </div>
+                <div class="valid-feedback">
+                    OK
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <label for="whats" class="form-label"><span data-feather="smartphone"></span> Whatsapp</label>
+                <input value="<%=(empresa != null)?empresa.whats:''%>" type="text" class="form-control" onkeypress="$(this).mask('(00) 00000-0000')" name="whats" id="whats" maxlength="15" required/>
+                <div class="invalid-feedback">
+                    Dados vazios
+                </div>
+                <div class="valid-feedback">
+                    Ok
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <label for="ig" class="form-label"><span data-feather="instagram"></span> Link Instagram</label>
+                <input value="<%=(empresa != null)?empresa.ig:''%>" type="text" class="form-control"  name="ig" id="ig"  required/>
+                <div class="invalid-feedback">
+                    Dados vazios
+                </div>
+                <div class="valid-feedback">
+                    Ok
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <label for="facebook" class="form-label"><span data-feather="facebook"></span>Link Facebook</label>
+                <input value="<%=(empresa != null)?empresa.facebook:''%>" type="text" class="form-control" name="facebook" id="facebook"/>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="descricao" class="form-label"><span data-feather="edit-2"></span> Descição de sua empresa</label>
+                <textarea name="descricao" id="descricao" cols="30" rows="5" class="form-control"><%=(empresa != null)?empresa.descricao:''%></textarea>
+            </div>
+            
+            <div class="mb-4 col-8">
+                <button class="mt-5 btn btn-primary form-control" id="submit" type="submit">Atualizar</button>
+            </div>
+        </div>
+    </form>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<%-include ('../../partials/scripts.ejs')%>

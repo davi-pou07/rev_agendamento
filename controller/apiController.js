@@ -194,6 +194,33 @@ router.post("/funcionario",async(req,res)=>{
             res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
         }
     })
+
+    router.post("/horario/remover",async(req,res)=>{
+        if (await usuarioAdmin(req.session.user) != undefined) {
+            var {horarioId,funcionarioId} = req.body
+            if (funcionarioId != '' && funcionarioId != undefined && horarioId != '' && horarioId != undefined) {
+                    var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
+                    if (funcionario != undefined) {
+                        var horario = await Horario.findOne({where:{funcionarioId:funcionario.id,id:horarioId}})
+                        if (horario != undefined) {
+                            Horario.destroy({where:{id:horario.id}}).then(()=>{
+                                res.json({resp:"Horario foi removido"})
+                            }).catch(err =>{
+                                res.json({erro:"Ocorreu um erro ao deletar, tente novamente"})
+                            })
+                        } else {
+                            res.json({erro:"Horario não foi identificado, recaregue a pagina e tente novamente"})
+                        }
+                    } else {
+                        res.json({erro:"Funcionario não identificado ou status inativo"})
+                    }
+            } else {
+                res.json({erro:`Dados inválidos`}) 
+            }
+        } else {
+            res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
+        }
+    })
 //================FIM HORARIO=====================
 
 module.exports = router

@@ -5,12 +5,12 @@
         .personal-figure {
         width: 60px;
         height: 60px;
-      }
-      .personal-avatar {
-        width: 60px;
-        height: 60px;
-      }
-    </style>
+        }
+        .personal-avatar {
+          width: 60px;
+          height: 60px;
+        }
+      </style>
 
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container">
@@ -29,39 +29,42 @@
               <li class="nav-item py-2"><a class="nav-link text-white fs-5 text-md-center text-start" href="/#horarios">Horarios</a></li>
               <li class="nav-item py-2"><a class="nav-link text-white fs-5 text-md-center text-start" href="#">Contatos</a></li>
             </ul>
-          </div>
-          <div class="btn-group d-flex" id="divLogin">
-            <a href="/user/login" class="btn btn-outline-success btn-sm">Login</a>
-            <a href="/user/registrar" class="btn btn-primary ms-2 btn-sm">Cadastre-se</a>
-          </div>
 
-          <div class="d-flex personal-image d-none" role="navigation" id="divPerfil">
-            <label class="label">
-                <figure class="personal-figure">
-                  <a class="nav-link text-white dropdown-toggle dropstart" href="#" id="dropTogle" role="button"
-                      id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src="/img/user.jpg" class="personal-avatar" id="imgCli" alt="avatar">
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-xl-start dropdown-menu-dark"
-                      aria-labelledby="navbarDropdownMenuLink">
-                      <li><a class="dropdown-item text-center" id="userNome">Usuario</a></li>
-                      <li>
-                          <hr class="dropdown-divider">
-                      </li>
-                      <li>
-                          <a class="dropdown-item" href="/user/editar/">Editar</a>
-                      </li>
-                      <li id="isAdmin" class="d-none">
-                          
-                      </li>
-                      <li>
-                          <hr class="dropdown-divider">
-                      </li>
-                      <li><a class="dropdown-item" id="aUsuarios" href="/user/logout">Sair</a></li>
-                  </ul>
-                </figure>
-            </label>
-        </div>
+            <div class="d-flex personal-image d-none" role="navigation" id="divPerfil">
+              <label class="label">
+                  <figure class="personal-figure">
+                    <a class="nav-link text-white dropdown-toggle dropstart" href="#" id="dropTogle" role="button"
+                        id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/img/user.jpg" class="personal-avatar" id="imgCli" alt="avatar">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menut dropdown-menu-dark"
+                        aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item text-center" id="userNome">Usuario</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/user/editar/">Editar</a>
+                        </li>
+                        <li id="isAdmin" class="d-none">
+                            
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" id="aUsuarios" href="/user/logout">Sair</a></li>
+                    </ul>
+                  </figure>
+              </label>
+            </div>
+
+            <div class="btn-group d-flex" id="divLogin">
+              <a href="/user/login" class="btn btn-outline-success btn-sm">Login</a>
+              <a href="/user/registrar" class="btn btn-primary ms-2 btn-sm">Cadastre-se</a>
+            </div>
+          </div>
+          
+          
         </div>
       </nav>
     </header>

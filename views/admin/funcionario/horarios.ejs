@@ -99,6 +99,8 @@
                             } else {
                                 alert(resp.data.erro)
                             }
+                        }).catch(err =>{
+                            alert("erro: Ocorreu um erro na comunicação com o servidor")
                         })
                     } else {
                         alert("Erro: Campos vazios")
@@ -107,17 +109,18 @@
 
                 }
 
-
                 function excluirHorario(valor) {
-                    var quantidadeHorarios = document.getElementById("quantidadeHorarios")
-                    quantidadeHorarios.value = parseInt(quantidadeHorarios.value) - 1
-
-                    var diaDe = document.getElementById(`diaDe${valor}`)
-                    var diaAte = document.getElementById(`diaAte${valor}`)
-                    var horario = document.getElementById(`horario${valor}`)
-                    var btnExluir = document.getElementById(`btnExluir${valor}`)
-
-                    diaDe.remove()
+                    var funcionarioId = document.getElementById("funcionarioId").value
+                    axios.post("/api/horario/remover",{horarioId:valor,funcionarioId:funcionarioId}).then(resp =>{
+                        if (resp.data.erro == undefined) {
+                                alert(resp.data.resp)
+                                document.location.reload()
+                        } else {
+                            alert(resp.data.erro)
+                        }
+                    }).catch(err =>{
+                        alert("erro: Ocorreu um erro na comunicação com o servidor")
+                    })
                 }
             </script>
             <%-include ('../../partials/scripts.ejs')%>

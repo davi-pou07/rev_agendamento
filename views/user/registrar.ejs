@@ -93,21 +93,4 @@
         }
     }
 </script>
-
-<script>
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-    function toBase64() {
-    var filesSelected = document.getElementById("fileFoto").files;
-    if (filesSelected.length > 0) {
-        var fileToLoad = filesSelected[0];
-        var fileReader = new FileReader();
-        fileReader.onload = function (fileLoadedEvent) {
-            var srcData = fileLoadedEvent.target.result; // <--- data: base64
-            var base64 = document.getElementById("fotoBase64").value = srcData
-            var foto = document.getElementById("foto").src = srcData
-        }
-        fileReader.readAsDataURL(fileToLoad);
-    }
-}
-</script>
 <%-include ("../partials/scripts.ejs")%>

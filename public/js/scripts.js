@@ -25,3 +25,17 @@ function usuarioLogado() {
     }
   })
 }
+
+function toBase64() {
+  var filesSelected = document.getElementById("fileFoto").files;
+  if (filesSelected.length > 0) {
+      var fileToLoad = filesSelected[0];
+      var fileReader = new FileReader();
+      fileReader.onload = function (fileLoadedEvent) {
+          var srcData = fileLoadedEvent.target.result; // <--- data: base64
+          var base64 = document.getElementById("fotoBase64").value = srcData
+          var foto = document.getElementById("foto").src = srcData
+      }
+      fileReader.readAsDataURL(fileToLoad);
+  }
+}
