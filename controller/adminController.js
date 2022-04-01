@@ -14,6 +14,7 @@ const authAdm = require("../middlewares/authAdm")
 
 const moment = require("moment")
 const validator = require("validator")
+const Banner = require('../Database/Banner')
 
 //=============== USUARIOS =======================
 
@@ -21,8 +22,8 @@ router.get("/usuarios",authAdm,async(req,res)=>{
     try {
         var usuarios = await User.findAll()
         for (var index = 0; index < usuarios.length; index++) {
-            usuarios[index].dataCri = moment(usuarios[index].createdAt).format("DD/MM/YYYY hh:mm")
-            usuarios[index].dataLog = moment(usuarios[index].updatedAt).format("DD/MM/YYYY hh:mm")
+            usuarios[index].dataCri = moment(usuarios[index].createdAt).format("DD/MM/YYYY HH:mm")
+            usuarios[index].dataLog = moment(usuarios[index].updatedAt).format("DD/MM/YYYY HH:mm")
         }
         res.render('admin/user/usuarios',{usuarios:usuarios})
     } catch (error) {
@@ -46,8 +47,8 @@ router.get("/funcionarios",authAdm,async(req,res)=>{
 
         for (var index = 0; index < funcionarios.length; index++) {
             funcionarioIds.push(funcionarios[index].id)
-            funcionarios[index].dataCri = moment(funcionarios[index].createdAt).format("DD/MM/YYYY hh:mm")
-            funcionarios[index].dataLog = moment(funcionarios[index].updatedAt).format("DD/MM/YYYY hh:mm")
+            funcionarios[index].dataCri = moment(funcionarios[index].createdAt).format("DD/MM/YYYY HH:mm")
+            funcionarios[index].dataLog = moment(funcionarios[index].updatedAt).format("DD/MM/YYYY HH:mm")
         }
 
         var users = await User.findAll({
@@ -230,5 +231,33 @@ router.post("/empresa",authAdm,async(req,res)=>{
 //=============== FIM EMPRESA =======================
 
 
+//=============BANNERS========================
+router.get("/banners",authAdm,async(req,res)=>{
+    var erro = req.flash("erro")
+    erro =(erro == undefined || erro.length == 0)?undefined:erro
+    var banners = await Banner.findAll()
+    for (let index = 0; index < banners.length; index++) {
+        var banner = banners[index];
+        banner.dataCri = moment(banner.createdAt).format("DD/MM/YYYY HH:mm")
+    }
+    res.render("admin/customizar/banners",{banners:banners,erro:erro})
+})
+
+router.get("/banners/adicionar",authAdm,async(req,res)=>{
+    var bannerId = req.query.bannerId
+    if (bannerId != undefined) {
+        var banner = await Banner.findByPk(bannerId)
+        if (banner != undefined) {
+            res.render("admin/customizar/banners-adicionar",{banner:banner})
+        } else {
+            req.flash('erro','Não foi possivel identificar banner informado')
+            res.redirect("/admin/banners")
+        }
+    } else {
+        res.render("admin/customizar/banners-adicionar",{banner:undefined})
+    }
+})
+
+//=============FIM BANNERS========================
 
 module.exports = router

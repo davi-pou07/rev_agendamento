@@ -13,6 +13,7 @@ const RecuperaSenha = require("./Database/RecuperaSenha")
 const Funcionario = require("./Database/Funcionario")
 const Horario = require("./Database/Horario")
 const Empresa = require("./Database/Empresa")
+const Banner = require("./Database/Banner")
 
 const userController = require("./controller/userController")
 const adminController = require("./controller/adminController")

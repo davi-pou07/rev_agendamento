@@ -1,0 +1,36 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Banners</h1>
+        </div>
+        <a href="/admin/banners/adicionar" class="btn btn-primary">Adicionar</a>
+        <%if(banners.length > 0){%>
+        <div class="table-responsive">
+            <table class="table" id="table">
+                <thead >
+                    <tr class="mt-4">
+                        <th class="text-center">#</th>
+                        <th class="text-center">Titulo</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Data Criação</th>
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%banners.forEach(banner =>{%>
+                        <tr>
+                            <td class="align-middle text-center"><%=banner.id%></td>
+                            <td class="align-middle text-center"><%=banner.titulo%></td>
+                            <td class="align-middle text-center"><%=(banner.status == true)?'Ativo':'Inativo'%></td>
+                            <td class="align-middle text-center"><%=banner.dataCri%></td>
+                            <td class="align-middle text-center"><button value="<%=banner.id%>" class="btn btn-success">Editar</button></td>
+                        </tr>
+                    <%})%>
+                </tbody>
+            </table>
+        </div>
+        <%}%>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<%-include ('../../partials/scripts.ejs')%>
