@@ -9,6 +9,7 @@ const moment = require("moment")
 const usuarioAdmin = require("../functions/usuarioAdmin")
 const Funcionario = require('../Database/Funcionario')
 const Horario = require('../Database/Horario')
+const Corte = require('../Database/Corte')
 
 //================USUARIOS=====================
 
@@ -222,5 +223,60 @@ router.post("/funcionario",async(req,res)=>{
         }
     })
 //================FIM HORARIO=====================
+
+//================CORTE=====================
+router.get('/corte/:corteId',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var corteId = req.params.corteId
+        try {
+            if (corteId != undefined) {
+                var corte = await Corte.findByPk(corteId)
+                if (corte != undefined) {
+                    res.json({corte:corte})
+                } else {
+                    res.json({erro:"Corte não identificado"})
+                }
+            } else {
+                res.json({erro:"Parametros invalidos"})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+
+router.post('/corte/adicionar',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {nome,tempo,status,preco} = req.body
+        try {
+            if (nome != undefined && nome != '' && tempo != undefined && tempo != '' && status != undefined && status != '' && preco != undefined && preco != '') {
+                Corte.create({
+                    nome:nome,
+                    tempo:tempo,
+                    status:status,
+                    preco:preco,
+                }).then(()=>{
+                    res.json({resp:'Corte adicionado com sucesso'})
+                }).catch(err =>{
+                    console.log(err)
+                    res.json({erro:`Ocorreu um erro \n${err}`})
+                })
+            } else {
+                res.json({erro:'Parametros inválidos'})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+//================FIM CORTE=====================
 
 module.exports = router

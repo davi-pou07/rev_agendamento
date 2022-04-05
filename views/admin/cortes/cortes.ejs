@@ -1,0 +1,166 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Cortes</h1>
+      </div>
+      <button onclick="editar()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar" type="button"><span data-feather="plus"></span>Adicionar</button>
+      <div class="table-responsive mt-5">
+        <table class="table" id="table">
+            <thead >
+                <tr class="mt-4">
+                    <th class="text-center">#</th>
+                    <th class="text-center">Nome</th>
+                    <th class="text-center">Preco</th>
+                    <th class="text-center">Tempo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Descrição</th>
+                    <th class="text-center">Data Criação</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%cortes.forEach(corte =>{%>
+                    <tr>
+                        <td class="align-middle text-center"><%=corte.id%></td>
+                        <td class="align-middle text-center"><%=corte.nome%></td>
+                        <td class="align-middle text-center text-nowrap">R$<%=corte.preco.toFixed(2)%></td>
+                        <td class="align-middle text-center text-nowrap"><%=corte.tempo%></td>
+                        <td class="align-middle text-center"><%=(corte.status == true)?'Ativo':'Inativo'%></td>
+                        <td class="align-middle text-center"><%=(corte.status == true)?'Ativo':'Inativo'%></td>
+                        <td class="align-middle text-center"><%=corte.dataCri%></td>
+                        <td class="align-middle text-center"><button data-bs-toggle="modal" type="button" value="<%=corte.id%>" onclick="editar(this.value)" data-bs-target="#modalEdit" class="btn btn-success">Editar</button></td>
+                    </tr>
+                <%})%>
+            </tbody>
+        </table>
+      </div>
+
+      <div class="modal fade" id="modalAdicionar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Corte</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <input type="hidden" name="corteId" id="corteId">
+                  <div class="col-12">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" name="nome" id="nome">
+                  </div>
+                  <div class="col-12 my-3">
+                    <label for="nome" class="form-label">Preco <span class="text-muted">R$</span></label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">R$</span>
+                        <input type="text" onkeyup="$(this).mask('#.##0,00', {reverse: true})" class="form-control" id="precoCorte" name="precoCorte">
+                    </div>  
+                  </div>
+                  <div class="col-12 mb-3">
+                    <label for="nome" class="form-label">Tempo <span class="text-muted">hh:mm</span></label>
+                    <input type="text" class="form-control" id="tempo" onkeyup="$(this).mask('00:00')">
+                  </div>
+                  <div class="col-12 mb-3">
+                    <label for="nome" class="form-label">Descrição</label>
+                    <textarea name="descricao" id="descricao" class="form-control"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label for="nome" class="form-label">Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="fecharModar" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" id="btnSalvar" onclick="salvar()" class="btn btn-primary">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<script>
+    function editar(corteId) {
+        var modalAdicionarLabel = document.getElementById("modalAdicionarLabel")
+        var nome = document.getElementById("nome")
+        var precoCorte = document.getElementById("precoCorte")
+        var status = document.getElementById("status")
+        var tempo = document.getElementById("tempo")
+        var corteIdIn = document.getElementById("corteId")
+        var descricao = document.getElementById("descricao")
+
+        if (corteId == undefined) {
+            modalAdicionarLabel.innerHTML = 'Adicionar Corte'
+            nome.value = ''
+            precoCorte.value = ''
+            tempo.value = ''
+            corteIdIn.value = ''
+            descricao.value = ''
+        } else {
+            axios.get(`/api/corte/${corteId}`).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    var corte = resp.data.corte
+                    modalAdicionarLabel.innerHTML = corte.nome
+                    nome.value = corte.nome
+                    precoCorte.value = corte.preco
+                    status.value = corte.status
+                    tempo.value = corte.tempo
+                    corteIdIn.value = corte.id
+                    descricao.value = corte.descricao
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        }
+        
+    }
+
+    function salvar() {
+        var corteId = document.getElementById("corteId").value
+        var nome = document.getElementById("nome").value
+        var precoCorte = document.getElementById("precoCorte").value
+        var status = document.getElementById("status").value
+        var tempo = document.getElementById("tempo").value
+        var descricao = document.getElementById("descricao").value
+
+
+        if (nome == undefined || nome == '' || descricao == undefined || descricao == '' || precoCorte == undefined || precoCorte == '' || status == undefined || status == '' || tempo == undefined || tempo == '') {
+            return alert("Dados vazios, verifique com atenção e tente novamente")
+        }
+
+        if (corteId != '' && corteId != undefined) {
+            axios.post(`/api/corte/editar`,{corteId:corteId,status:status,nome:nome,preco:precoCorte,tempo:tempo,descricao:descricao}).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    alert(resp.data.resp)
+                    document.location.reload()
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        } else {
+            axios.post(`/api/corte/adicionar`,{status:status,nome:nome,preco:precoCorte,tempo:tempo,descricao:descricao}).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    alert(resp.data.resp)
+                    document.location.reload()
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        }
+        
+    }
+</script>
+<%-include ('../../partials/scripts.ejs')%>

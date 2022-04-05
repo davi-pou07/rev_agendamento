@@ -14,6 +14,8 @@ const Funcionario = require("./Database/Funcionario")
 const Horario = require("./Database/Horario")
 const Empresa = require("./Database/Empresa")
 const Banner = require("./Database/Banner")
+const Postagem = require("./Database/Postagem")
+const Corte = require("./Database/Corte")
 
 const userController = require("./controller/userController")
 const adminController = require("./controller/adminController")

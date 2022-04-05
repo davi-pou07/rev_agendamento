@@ -4,25 +4,52 @@
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Banners adicionar</h1>
+                <%if(erro){%>
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                      <div>
+                        <%=erro%>
+                      </div>
+                    </div>
+                  <%}%>
             </div>
             <div class="container">
-                <div class="banner-image">
-                    <label class="label">
-                        <input type="file" id="novaFoto" onchange="encodeImageFileAsURL()">
-                        <input type="hidden" name="imagem" id="foto">
-                        <figure class="banner-figure">
-                            <img src="/img/modelo-de-banner-de-barbearia_23-2148818937.webp" class="d-block w-100 banner-avatar" id="fotoAtual"
-                                alt="">
-                        </figure>
-                    </label>
-                    <p class="text-muted">OBS:Tamaho das imagens ideal é de 1903px / 512px
-                    </p>
-                </div>
-                <div class="row justify-content-center">
-
-                </div>
-
+                <form action="/admin/banners/adicionar" method="post" method="post" class="needs-validation" id="form" novalidate>
+                    <input type="hidden" name="bannerId" value="<%=(banner != undefined)?banner.id:undefined%>">
+                    <div class="banner-image">
+                        <label class="label">
+                            <input type="file" id="fileFoto" data-valor="<%=(banner != undefined)?banner.id:undefined%>" onchange="toBase64()" capture="user" <%=(banner != undefined)?'':'required'%> accept="image/*"/>
+                            <input type="hidden" name="imagem" id="fotoBase64" value="<%=(banner != undefined)?banner.foto:undefined%>">
+                            <figure class="banner-figure">
+                                <img src="<%=(banner != undefined)?banner.foto:'/img/cinza.svg'%>" class="d-block w-100 banner-avatar" width="1903px" height="512px" id="foto">
+                            </figure>
+                        </label>
+                        <p class="text-muted">OBS:Tamaho das imagens ideal é de 1903px / 512px
+                        </p>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <label for="titulo" class="form-label">Insira o titulo desse banner</label>
+                            <input type="text" class="form-control" value="<%=(banner != undefined)?banner.titulo:undefined%>" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" class="form-select" id="status" required>
+                                <option value="true" <%=(banner != undefined && banner.status == true)?'selected':''%>>Ativo</option>
+                                <option value="false"<%=(banner != undefined && banner.status == false)?'selected':''%>>Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-6 mt-5"><button type="submit" onclick="valid()" class="btn btn-success form-control">Salvar</button></div>
+                    </div>
+                </form>
             </div>
         </main>
         <%-include ('../../partials/footerAdmin.ejs')%>
+        <script>
+            function valid() {
+                if (document.getElementById("fileFoto").dataset.valor == '') {
+                    alert("Click no campo cinza para adicioner uma imagem")
+                }
+            }
+        </script>
             <%-include ('../../partials/scripts.ejs')%>

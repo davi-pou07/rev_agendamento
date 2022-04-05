@@ -2,7 +2,7 @@
 <%-include ('../../partials/navAdmin.ejs')%>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Banners</h1>
+            <h1 class="h2">Postagens</h1>
             <%if(erro){%>
                 <div class="alert alert-warning d-flex align-items-center" role="alert">
                   <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -12,8 +12,8 @@
                 </div>
               <%}%>
         </div>
-        <a href="/admin/banners/adicionar" class="btn btn-primary">Adicionar</a>
-        <%if(banners.length > 0){%>
+        <a href="/admin/postagens/adicionar" class="btn btn-primary">Adicionar</a>
+        <%if(postagens.length > 0){%>
         <div class="table-responsive mt-5">
             <table class="table" id="table">
                 <thead >
@@ -26,13 +26,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%banners.forEach(banner =>{%>
+                    <%postagens.forEach(post =>{%>
                         <tr>
-                            <td class="align-middle text-center"><%=banner.id%></td>
-                            <td class="align-middle text-center"><%=banner.titulo%></td>
-                            <td class="align-middle text-center"><%=(banner.status == true)?'Ativo':'Inativo'%></td>
-                            <td class="align-middle text-center"><%=banner.dataCri%></td>
-                            <td class="align-middle text-center"><a href="/admin/banners/adicionar?bannerId=<%=banner.id%>" class="btn btn-success">Editar</a></td>
+                            <td class="align-middle text-center"><%=post.id%></td>
+                            <td class="align-middle text-center"><%=post.titulo%></td>
+                            <td class="align-middle text-center"><%=(post.status == true)?'Ativo':'Inativo'%></td>
+                            <td class="align-middle text-center"><%=post.dataCri%></td>
+                            <td class="align-middle text-center"><a href="/admin/postagens/adicionar?postId=<%=post.id%>" class="btn btn-success">Editar</a></td>
                         </tr>
                     <%})%>
                 </tbody>

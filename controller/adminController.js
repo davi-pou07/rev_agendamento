@@ -15,6 +15,8 @@ const authAdm = require("../middlewares/authAdm")
 const moment = require("moment")
 const validator = require("validator")
 const Banner = require('../Database/Banner')
+const Postagem = require('../Database/Postagem')
+const Corte = require('../Database/Corte')
 
 //=============== USUARIOS =======================
 
@@ -244,20 +246,173 @@ router.get("/banners",authAdm,async(req,res)=>{
 })
 
 router.get("/banners/adicionar",authAdm,async(req,res)=>{
+    var erro = req.flash('erro')
+    erro = (erro == undefined || erro.length == 0)?undefined:erro
     var bannerId = req.query.bannerId
     if (bannerId != undefined) {
         var banner = await Banner.findByPk(bannerId)
         if (banner != undefined) {
-            res.render("admin/customizar/banners-adicionar",{banner:banner})
+            res.render("admin/customizar/banners-adicionar",{banner:banner,erro:erro})
         } else {
             req.flash('erro','Não foi possivel identificar banner informado')
             res.redirect("/admin/banners")
         }
     } else {
-        res.render("admin/customizar/banners-adicionar",{banner:undefined})
+        res.render("admin/customizar/banners-adicionar",{banner:undefined,erro:erro})
+    }
+})
+
+router.post("/banners/adicionar",authAdm,async(req,res)=>{
+    var {titulo,imagem,status,bannerId} = req.body
+    var erro = ''
+    if (titulo != undefined && titulo != '' && imagem != undefined && imagem != '' && status != undefined && status != '' ) {
+        if (bannerId != "" && bannerId != undefined) {
+            try {
+                var banner = await Banner.findByPk(bannerId)
+            } catch (err) {
+                erro = `Ocorreu um erro ao atualizar banner\n${err}`
+                req.flash('erro',erro)
+                return res.redirect('/admin/banners/adicionar')
+            }
+            if (banner != undefined) {
+                Banner.update({
+                    titulo:titulo,
+                    foto:imagem,
+                    status:status
+                },{where:{
+                    id:banner.id
+                }}).then(()=>{
+                    res.redirect("/admin/banners")
+                }).catch(err =>{
+                    erro = `Ocorreu um erro ao atualizar banner\n${err}`
+                    req.flash('erro',erro)
+                    res.redirect("/admin/banners/adicionar")
+                })
+            } else {
+                req.flash('erro','Não foi possivel identificar banner informado')
+                res.redirect("/admin/banners")
+            }
+        } else {
+            Banner.create({
+                titulo:titulo,
+                foto:imagem,
+                status:status
+            }).then(()=>{
+                res.redirect("/admin/banners")
+            }).catch(err =>{
+                erro = `Ocorreu um erro ao adicionar banner\n${err}`
+                req.flash('erro',erro)
+                res.redirect("/admin/banners/adicionar")
+            })
+        }
+    } else {
+        erro = 'Dados inválidos ou vazio'
+        req.flash('erro',erro)
+        res.redirect("/admin/banners/adicionar")
     }
 })
 
 //=============FIM BANNERS========================
+
+//=============POSTAGENS========================
+
+router.get("/postagens",authAdm,async(req,res)=>{
+    var erro = req.flash("erro")
+    erro =(erro == undefined || erro.length == 0)?undefined:erro
+    var postagens = await Postagem.findAll()
+    for (let index = 0; index < postagens.length; index++) {
+        var post = postagens[index];
+        post.dataCri = moment(post.createdAt).format("DD/MM/YYYY HH:mm")
+    }
+    res.render("admin/customizar/postagens",{postagens:postagens,erro:erro})
+})
+
+router.get("/postagens/adicionar",authAdm,async(req,res)=>{
+    var erro = req.flash('erro')
+    erro = (erro == undefined || erro.length == 0)?undefined:erro
+    var postId = req.query.postId
+    if (postId != undefined) {
+        var post = await Postagem.findByPk(postId)
+        if (post != undefined) {
+            res.render("admin/customizar/postagens-adicionar",{post:post,erro:erro})
+        } else {
+            req.flash('erro','Não foi possivel identificar postagem informada')
+            res.redirect("/admin/postagens")
+        }
+    } else {
+        res.render("admin/customizar/postagens-adicionar",{post:undefined,erro:erro})
+    }
+})
+
+router.post("/postagens/adicionar",authAdm,async(req,res)=>{
+    var {titulo,post,status,postId,tipo} = req.body
+    console.log(post)
+    var erro = ''
+    if (titulo != undefined && titulo != '' && post != undefined && post != '' &&  tipo != undefined && tipo != '' && status != undefined && status != '' ) {
+        if (postId != "" && postId != undefined) {
+            try {
+                var postagem = await Postagem.findByPk(postId)
+            } catch (err) {
+                erro = `Ocorreu um erro ao atualizar Postagem\n${err}`
+                req.flash('erro',erro)
+                return res.redirect('/admin/postagens/adicionar')
+            }
+            if (postagem != undefined) {
+                Postagem.update({
+                    titulo:titulo,
+                    post:post,
+                    tipo:tipo,
+                    status:status
+                },{where:{
+                    id:postagem.id
+                }}).then(()=>{
+                    res.redirect("/admin/postagens")
+                }).catch(err =>{
+                    erro = `Ocorreu um erro ao atualizar Postagem\n${err}`
+                    req.flash('erro',erro)
+                    res.redirect("/admin/postagens/adicionar")
+                })
+            } else {
+                req.flash('erro','Não foi possivel identificar Postagem informada')
+                res.redirect("/admin/postagens")
+            }
+        } else {
+            Postagem.create({
+                titulo:titulo,
+                post:post,
+                tipo:tipo,
+                status:status
+            }).then(()=>{
+                res.redirect("/admin/postagens")
+            }).catch(err =>{
+                erro = `Ocorreu um erro ao adicionar Postagem\n${err}`
+                req.flash('erro',erro)
+                res.redirect("/admin/postagens/adicionar")
+            })
+        }
+    } else {
+        erro = 'Dados inválidos ou vazio'
+        req.flash('erro',erro)
+        res.redirect("/admin/postagens/adicionar")
+    }
+})
+
+
+//=============FIM POSTAGENS========================
+
+
+//=============CORTES========================
+router.get("/cortes",authAdm,async(req,res)=>{
+    var erro = req.flash("erro")
+    erro =(erro == undefined || erro.length == 0)?undefined:erro
+    var cortes = await Corte.findAll()
+    for (let index = 0; index < cortes.length; index++) {
+        var corte = cortes[index];
+        corte.dataCri = moment(corte.createdAt).format("DD/MM/YYYY HH:mm")
+    }
+    res.render("admin/cortes/cortes",{cortes:cortes,erro:erro})
+})
+//=============FIM CORTES========================
+
 
 module.exports = router
