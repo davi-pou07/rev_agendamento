@@ -20,7 +20,7 @@ const Corte = connection.define('cortes',{
         allowNull:false 
     },
     status:{
-        type:Sequelize.STRING,
+        type:Sequelize.BOOLEAN,
         allowNull:false 
     }
 

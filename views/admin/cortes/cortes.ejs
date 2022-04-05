@@ -14,7 +14,6 @@
                     <th class="text-center">Preco</th>
                     <th class="text-center">Tempo</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Descrição</th>
                     <th class="text-center">Data Criação</th>
                     <th class="text-center">Ação</th>
                 </tr>
@@ -24,12 +23,11 @@
                     <tr>
                         <td class="align-middle text-center"><%=corte.id%></td>
                         <td class="align-middle text-center"><%=corte.nome%></td>
-                        <td class="align-middle text-center text-nowrap">R$<%=corte.preco.toFixed(2)%></td>
+                        <td class="align-middle text-center text-nowrap">R$<%=parseFloat(corte.preco).toFixed(2)%></td>
                         <td class="align-middle text-center text-nowrap"><%=corte.tempo%></td>
                         <td class="align-middle text-center"><%=(corte.status == true)?'Ativo':'Inativo'%></td>
-                        <td class="align-middle text-center"><%=(corte.status == true)?'Ativo':'Inativo'%></td>
                         <td class="align-middle text-center"><%=corte.dataCri%></td>
-                        <td class="align-middle text-center"><button data-bs-toggle="modal" type="button" value="<%=corte.id%>" onclick="editar(this.value)" data-bs-target="#modalEdit" class="btn btn-success">Editar</button></td>
+                        <td class="align-middle text-center"><button data-bs-toggle="modal" type="button" value="<%=corte.id%>" onclick="editar(this.value)" data-bs-target="#modalAdicionar" class="btn btn-success">Editar</button></td>
                     </tr>
                 <%})%>
             </tbody>

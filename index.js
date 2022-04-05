@@ -56,6 +56,10 @@ app.get("/", async(req, res) => {
    res.render("index")
 })
 
+app.get("/t", async(req, res) => {
+    res.render("teste")
+ })
+
 app.get("/admin",authAdm, async(req, res) => {
     var erro = req.flash('erro')
     erro = (erro == undefined || erro.length == 0)?undefined:erro

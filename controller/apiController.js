@@ -251,14 +251,18 @@ router.get('/corte/:corteId',async(req,res)=>{
 
 router.post('/corte/adicionar',async(req,res)=>{
     if (await usuarioAdmin(req.session.user) != undefined) {
-        var {nome,tempo,status,preco} = req.body
+        var {nome,tempo,status,preco,descricao} = req.body
+        if(preco.toString().includes(",")){
+            preco = parseFloat(preco.toString().replace(/\./g,"").replace(",","."))
+        }
         try {
-            if (nome != undefined && nome != '' && tempo != undefined && tempo != '' && status != undefined && status != '' && preco != undefined && preco != '') {
+            if (nome != undefined && nome != '' && descricao != undefined && descricao != '' && tempo != undefined && tempo != '' && status != undefined && status != '' && preco != undefined && preco != '') {
                 Corte.create({
                     nome:nome,
                     tempo:tempo,
                     status:status,
                     preco:preco,
+                    descricao:descricao
                 }).then(()=>{
                     res.json({resp:'Corte adicionado com sucesso'})
                 }).catch(err =>{
@@ -277,6 +281,46 @@ router.post('/corte/adicionar',async(req,res)=>{
         res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
     }
 })
+
+router.post('/corte/editar',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {corteId,nome,tempo,status,preco,descricao} = req.body
+        if(preco.toString().includes(",")){
+            preco = parseFloat(preco.toString().replace(/\./g,"").replace(",","."))
+        }
+        try {
+            if (nome != undefined && nome != '' && corteId != undefined && corteId != '' && descricao != undefined && descricao != '' && tempo != undefined && tempo != '' && status != undefined && status != '' && preco != undefined && preco != '') {
+                var corte = await Corte.findByPk(corteId)
+                if (corte != undefined) {
+                    Corte.update({
+                        nome:nome,
+                        tempo:tempo,
+                        status:status,
+                        preco:preco,
+                        descricao:descricao
+                    },{where:{id:corteId}}).then(()=>{
+                        res.json({resp:'Corte atualizado com sucesso'})
+                    }).catch(err =>{
+                        console.log(err)
+                        res.json({erro:`Ocorreu um erro \n${err}`})
+                    })
+                } else {
+                    res.json({erro:'Não foi possivel identificar o corte que deseja altera. Recarregue a pagina!'})
+                }
+            } else {
+                res.json({erro:'Parametros inválidos'})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+
+
 //================FIM CORTE=====================
 
 module.exports = router
