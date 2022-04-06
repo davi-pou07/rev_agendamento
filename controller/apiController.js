@@ -10,6 +10,7 @@ const usuarioAdmin = require("../functions/usuarioAdmin")
 const Funcionario = require('../Database/Funcionario')
 const Horario = require('../Database/Horario')
 const Corte = require('../Database/Corte')
+const Empresa = require('../Database/Empresa')
 
 //================USUARIOS=====================
 
@@ -222,6 +223,44 @@ router.post("/funcionario",async(req,res)=>{
             res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
         }
     })
+
+    async function gerarHorarios(hora) {
+        var primeira = moment(hora.split("-")[0],'h:m')
+        var ultima = moment(hora.split("-")[1],'h:m')
+        var hora = primeira
+        var x = true
+        var horas =[]
+        horas.push(primeira.format('HH:mm'))
+        while (x) {
+            if (hora.add(30,'minutes').isSameOrBefore(ultima)) {
+                horas.push(hora.format('HH:mm'))
+            } else {
+                x=false
+            }
+        }
+        return horas
+    }
+
+    router.get("/horarios/listar/",async(req,res)=>{
+        var add = req.query.add
+        add = (add == undefined)?0:add
+        var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+        var inicioSemana = moment().isoWeekday(1)
+        var filtro = inicioSemana.add(add,'week')
+        
+        var empresa = await Empresa.findOne()
+
+        var horarios = await gerarHorarios(empresa.as)
+        console.log(horarios)
+
+        var datas = []
+        var x = 0
+        while(x < 7){
+            datas.push(`${dias[x]} ${filtro.isoWeekday(x+1).format('DD/MM')}`)
+            x++
+        }
+        res.json({datas:datas,horarios:horarios})
+    })
 //================FIM HORARIO=====================
 
 //================CORTE=====================
@@ -322,5 +361,19 @@ router.post('/corte/editar',async(req,res)=>{
 
 
 //================FIM CORTE=====================
+
+
+//================EMPRESA=====================
+
+router.get("/empresa",async(req,res)=>{
+    console.log("aqui")
+    try {
+    var empresa = await Empresa.findOne()
+    res.json({empresa:empresa})
+    } catch (error) {
+        console.log(error)
+    }
+})
+//================FIM EMPRESA=====================
 
 module.exports = router

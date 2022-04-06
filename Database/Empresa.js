@@ -30,6 +30,22 @@ const Empresa = connection.define('empresas',{
     descricao:{
         type: Sequelize.TEXT,
         allowNull:true
+    },
+    endereco:{
+        type: Sequelize.STRING,
+        allowNull:false
+    },
+    de:{
+        type:Sequelize.INTEGER,
+        allowNull:false
+    },
+    ate:{
+        type:Sequelize.INTEGER,
+        allowNull:false
+    },
+    as:{
+        type: Sequelize.STRING,
+        allowNull:false
     }
 
 })

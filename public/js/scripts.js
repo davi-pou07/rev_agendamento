@@ -24,6 +24,13 @@ function usuarioLogado() {
       divPerfil.classList.add("d-none")
     }
   })
+  empresa()
+}
+
+function empresa() {
+  axios.get("/api/empresa").then(resp =>{
+    document.getElementById("logo").src = resp.data.empresa.logo
+  })
 }
 
 function toBase64() {

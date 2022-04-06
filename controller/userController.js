@@ -15,6 +15,8 @@ const validator = require("validator")
 const nodemailer = require("nodemailer")
 const fs = require("fs")
 const ejs = require('ejs')
+const Empresa = require('../Database/Empresa')
+const Corte = require('../Database/Corte')
 
 var remetente = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -40,10 +42,11 @@ router.get("/user/registrar", async (req, res) => {
     email = (email == undefined || email.length == 0) ? undefined : email
     foto = (foto == undefined || foto.length == 0) ? undefined : foto
     numero = (numero == undefined || numero.length == 0) ? undefined : numero
-
+    var empresa = await Empresa.findOne()
+    var cortes = await Corte.findAll({where:{status:true}})
     console.log(erro)
 
-    res.render("user/registrar", { erro: erro, nome: nome, email: email, foto: foto, numero: numero })
+    res.render("user/registrar", { erro: erro, nome: nome, email: email, foto: foto, numero: numero,empresa:empresa,cortes:cortes })
 })
 
 
@@ -188,7 +191,9 @@ router.get("/user/editar", auth, async (req, res) => {
     if (usuarioId != undefined) {
         var usuario = await User.findOne({ where: { id: usuarioId, status: true } })
         if (usuario != undefined) {
-            res.render("user/editar", { foto: usuario.foto, nome: usuario.nome, email: usuario.email, numero: usuario.numero, erro: erro, msm: msm })
+            var empresa = await Empresa.findOne()
+            var cortes = await Corte.findAll({where:{status:true}})
+            res.render("user/editar", {cortes:cortes, empresa:empresa,foto: usuario.foto, nome: usuario.nome, email: usuario.email, numero: usuario.numero, erro: erro, msm: msm })
         } else {
             req.flash('erro', "Erro ao identificar o usuario, realize login novamente")
             res.redirect("/user/login")

@@ -128,6 +128,10 @@ router.get("/empresa",authAdm,async(req,res)=>{
         var facebook = req.flash("facebook")
         var descricao = req.flash("descricao")
         var email = req.flash("email")
+        var endereco = req.flash("endereco")
+        var de = req.flash("de")
+        var ate = req.flash("ate")
+        var as = req.flash("as")
 
         erro = (erro == undefined || erro.length == 0 )?undefined:erro
         msm = (msm == undefined || msm.length == 0 )?undefined:msm
@@ -142,6 +146,10 @@ router.get("/empresa",authAdm,async(req,res)=>{
             empresa.descricao = (descricao == undefined || descricao.length == 0)?undefined:descricao
             empresa.email = (email == undefined || email.length == 0)?undefined:email
             empresa.ig = (ig == undefined || ig.length == 0)?undefined:ig
+            empresa.endereco = (endereco == undefined || endereco.length == 0)?undefined:endereco
+            empresa.de = (de == undefined || de.length == 0)?undefined:de
+            empresa.ate = (ate == undefined || ate.length == 0)?undefined:ate
+            empresa.as = (as == undefined || as.length == 0)?undefined:as
         }
         res.render("admin/customizar/empresa",{empresa:empresa,erro:erro,msm:msm})
     } catch (error) {
@@ -152,7 +160,7 @@ router.get("/empresa",authAdm,async(req,res)=>{
 })
 
 router.post("/empresa",authAdm,async(req,res)=>{
-    var {logo,nome,whats,facebook,descricao,email,ig} = req.body
+    var {logo,nome,whats,facebook,descricao,email,ig,endereco,de,ate,as} = req.body
 
     req.flash("logo",logo)
     req.flash("nome",nome)
@@ -161,7 +169,10 @@ router.post("/empresa",authAdm,async(req,res)=>{
     req.flash("descricao",descricao)
     req.flash("email",email)
     req.flash("ig",ig)
-    console.log(req.body)
+    req.flash("endereco",endereco)
+    req.flash("de",de)
+    req.flash("ate",ate)
+    req.flash("as",as)
     var erro = ''
     var msm = ''
     if (
@@ -169,7 +180,11 @@ router.post("/empresa",authAdm,async(req,res)=>{
         nome != '' && nome != undefined &&
         whats != '' && whats != undefined &&
         email != '' && email != undefined &&
-        ig != '' && ig != undefined 
+        ig != '' && ig != undefined &&
+        de != '' && de != undefined &&
+        ate != '' && ate != undefined &&
+        as != '' && as != undefined &&
+        endereco != '' && endereco != undefined 
     ) {
 
         if (validator.isEmail(email) != true) {
@@ -193,6 +208,10 @@ router.post("/empresa",authAdm,async(req,res)=>{
                 descricao:descricao,
                 email:email,
                 facebook:facebook,
+                endereco:endereco,
+                de:de,
+                ate:ate,
+                as:as,
                 ig:ig
             }).then(()=>{
                 msm = 'Atualizações realizada com sucesso'
@@ -211,6 +230,10 @@ router.post("/empresa",authAdm,async(req,res)=>{
                 descricao:descricao,
                 email:email,
                 facebook:facebook,
+                de:de,
+                ate:ate,
+                as:as,
+                endereco:endereco,
                 ig:ig
             },{where:{id:empresa.id}}).then(()=>{
                 msm = 'Atualizações realizada com sucesso'
@@ -346,7 +369,6 @@ router.get("/postagens/adicionar",authAdm,async(req,res)=>{
 
 router.post("/postagens/adicionar",authAdm,async(req,res)=>{
     var {titulo,post,status,postId,tipo} = req.body
-    console.log(post)
     var erro = ''
     if (titulo != undefined && titulo != '' && post != undefined && post != '' &&  tipo != undefined && tipo != '' && status != undefined && status != '' ) {
         if (postId != "" && postId != undefined) {

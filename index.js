@@ -16,14 +16,16 @@ const Empresa = require("./Database/Empresa")
 const Banner = require("./Database/Banner")
 const Postagem = require("./Database/Postagem")
 const Corte = require("./Database/Corte")
+const Reserva = require("./Database/Reserva")
 
 const userController = require("./controller/userController")
 const adminController = require("./controller/adminController")
 const apiController = require("./controller/apiController")
 //databases
 const path = require('path')
-const PORT = process.env.PORT || 6060
+const PORT = 6060
 
+const moment =  require('moment')
 const authAdm = require("./middlewares/authAdm")
 
 app.use(cookieParser("asdfasfdasfaz"))
@@ -53,11 +55,28 @@ app.use("/admin",adminController)
 app.use("/api",apiController)
 
 app.get("/", async(req, res) => {
-   res.render("index")
+    try {
+        var banners = await Banner.findAll({where:{status:true}})
+        var postagens = await Postagem.findAll({where:{status:true}})
+        var cortes = await Corte.findAll({where:{status:true},order: [['preco', 'asc']]})
+        var empresa = await Empresa.findOne() 
+    } catch (error) {
+        console.log(error)
+    }
+   
+   res.render("index",{banners:banners,postagens:postagens,cortes:cortes,empresa:empresa})
 })
 
-app.get("/t", async(req, res) => {
-    res.render("teste")
+app.get("/agendamento", async(req, res) => {
+    
+    var {barberId,data} = req.query
+    var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+    data = (data == undefined)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:data
+
+    var exist = await Funcionario.findByPk(barberId)
+    barberId = (exist == undefined)?0:exist.id
+    var barbers = await Funcionario.findAll({where:{status:true}})
+    res.render("agendamento",{barbers:barbers,barberId:barberId,data:data})
  })
 
 app.get("/admin",authAdm, async(req, res) => {

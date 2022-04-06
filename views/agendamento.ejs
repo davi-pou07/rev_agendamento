@@ -2,6 +2,37 @@
 <%-include ("./partials/nav.ejs")%>
 <main>
     <div class="container">
+        <div class="card mt-4">
+            <div class="bg-dark text-white card-header">
+                <h4 class="my-2">Selecione um de nossos Barber</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <div class="input-group">
+                        <input class="me-2" type="radio" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
+                        <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
+                        <span class="ms-2 px-1">
+                            <label class="fw-bold">Todos</label><br>
+                            <label for="" class="text-muted"></label>
+                        </span>
+                        </div>
+                    </div>
+                    <%barbers.forEach(barber =>{%>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="input-group">
+                            <input class="me-2" type="radio" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
+                            <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
+                            <span class="ms-2 px-1">
+                                <label class="fw-bold"><%=barber.apelido%></label><br>
+                                <label for="" class="text-muted">@<%=barber.ig%></label>
+                            </span>
+                            </div>
+                        </div>
+                    <%})%>
+                </div>
+            </div>
+        </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-end mt-5">
               <li class="page-item disabled">
@@ -12,21 +43,22 @@
               </li>
             </ul>
         </nav>
+        <input type="hidden" name="data" id="dataSelecionada" value="<%=data%>">
        <table class="table table-borderless table-hover mt-3">
            <thead>
-               <tr>
+               <tr id="tableDias">
                     <th></th>
-                   <th>Seg 05/03</th>
-                   <th>Ter 05/03</th>
-                   <th>Qua 05/03</th>
-                   <th>Qui 05/03</th>
-                   <th>Sex 05/03</th>
-                   <th>Sab 05/03</th>
-                   <th>Dom 05/03</th>
+                   <th></th>
+                   <th></th>
+                   <th></th>
+                   <th></th>
+                   <th></th>
+                   <th></th>
+                   <th></th>
                </tr>
            </thead>
-           <tbody>
-                <tr>
+           <tbody id="tableHorarios">
+                <!-- <tr>
                    <td> 09:00 </td>
                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
@@ -70,14 +102,29 @@
                     <td> <button class="btn btn-outline-success">Disponivel</button> </td>
                     <td> <button class="btn btn-outline-success">Disponivel</button> </td>
                     <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                </tr>
-
-                          
-
+                </tr> -->
            </tbody>
        </table>
     </div>
 </main>
+<script>
+    window.addEventListener('load',listarHoratios())
 
-<%-include ("./partials/footer.ejs")%>
+    function listarHoratios() {
+        var tableDias = document.getElementById("tableDias")
+        var tableHorarios = document.getElementById("tableHorarios")
+        var dataSelecionada = document.getElementById("dataSelecionada")
+
+        axios.get('/api/horarios/listar').then(resp =>{
+            var datas = resp.data.datas
+            var horarios = resq.data.horarios
+            //AQUIII ESQUECXENÃO AGORA É O FOREACH HORARIOS
+            var rows = `<th></th>`
+            datas.forEach(data => {
+                rows += `<th class="text-center ${(data == dataSelecionada.value)?'bg-success text-white':''}">${data}</th>`
+            });
+            tableDias.innerHTML =  rows
+        })
+    }
+</script>
 <%-include ("./partials/scripts.ejs")%>
