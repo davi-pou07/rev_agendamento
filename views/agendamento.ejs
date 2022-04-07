@@ -10,7 +10,7 @@
                 <div class="row">
                     <div class="col-sm-6 col-md-4">
                         <div class="input-group">
-                        <input class="me-2" type="radio" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
+                        <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
                         <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
                         <span class="ms-2 px-1">
                             <label class="fw-bold">Todos</label><br>
@@ -21,7 +21,7 @@
                     <%barbers.forEach(barber =>{%>
                         <div class="col-sm-6 col-md-4">
                             <div class="input-group">
-                            <input class="me-2" type="radio" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
+                            <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
                             <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
                             <span class="ms-2 px-1">
                                 <label class="fw-bold"><%=barber.apelido%></label><br>
@@ -33,91 +33,117 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12 mt-5">
+                <label for="corte" class="form-label">Selecione um corte</label>
+                <select name="corte" class="form-select form-select-lg" id="corte">
+                    <option value="0"  <%=(0 == corteId)?'selected':''%>>Selecione uma modalidade de corte</option>
+                    <%cortes.forEach(corte =>{%>
+                        <option value="<%=corte.id%>" <%=(corte.id == corteId)?'selected':''%>><%=corte.nome%> - <%=(corte.tempo.split(':')[0] == '00')?'':`${corte.tempo.split(':')[0]} hr`%> <%=(corte.tempo.split(':')[1] == '00')?'':`${corte.tempo.split(':')[1]} min`%> - R$<%=parseFloat(corte.preco).toFixed(2)%></option>
+                    <%})%>
+                </select>
+            </div>
+        </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-end mt-5">
-              <li class="page-item disabled">
-                <a class="page-link"><span data-feather="arrow-left"></span> Anterior</a>
+              <li class="page-item disabled" id="btnAnterior">
+                <button class="page-link" onclick="alteraSemana('s')"><span data-feather="arrow-left"></span> Anterior</button>
               </li>
-              <li class="page-item">
-                <a class="page-link" href="#">Proximo <span data-feather="arrow-right"></span></a>
+              <input type="hidden" name="add" id="add" value="0">
+              <li class="page-item" id="btnProximo">
+                <button class="page-link" onclick="alteraSemana('a')">Proximo <span data-feather="arrow-right"></span></button>
               </li>
             </ul>
         </nav>
         <input type="hidden" name="data" id="dataSelecionada" value="<%=data%>">
-       <table class="table table-borderless table-hover mt-3" id="tableAgend">
-           <thead>
-               <tr id="tableDias">
+        <div class="table-responsive">
+        <table class="table table-borderless table-hover mt-3" id="tableAgend">
+            <thead>
+                <tr id="tableDias">
+                     <th></th>
                     <th></th>
-                   <th></th>
-                   <th></th>
-                   <th></th>
-                   <th></th>
-                   <th></th>
-                   <th></th>
-                   <th></th>
-               </tr>
-           </thead>
-           <tbody id="tableHorarios">
-                <!-- <tr>
-                   <td> 09:00 </td>
-                   <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                   <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                   <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-               </tr>
-
-                <tr>
-                    <td> 10:00 </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
-
-                <tr>
-                    <td> 11:00 </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                </tr>
-
-                <tr>
-                    <td> 12:00</td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                </tr>
-
-                <tr>
-                    <td> 13:00 </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                </tr>
-                <tr>
-                    <td> 14:00 </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                    <td> <button class="btn btn-outline-success">Disponivel</button> </td>
-                </tr> -->
-           </tbody>
-       </table>
+            </thead>
+            <tbody id="tableHorarios">
+                
+            </tbody>
+        </table>
+        </div>
     </div>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 <script>
+
+    function alteraSemana(operator) {
+        var add = document.getElementById("add")
+        if (operator == 's') {
+            add.value = parseInt(add.value) - 1
+        }else{
+            add.value = parseInt(add.value) + 1
+        }
+
+        listarHoratios()
+    }
+
+    function agendar(data) {
+        var add = document.getElementById("add").value
+        var funcionarioId = document.querySelector('input[name="barber"]:checked').value;
+        var corte = document.getElementById("corte")
+
+        if (corte.value == 0) {
+            corte.classList.add("is-invalid")
+            corte.classList.remove("is-valid")
+            return alert("Gentileza selecione uma das modalidades de corte")
+        } else {
+            corte.classList.add("is-valid")
+            corte.classList.remove("is-invalid")
+
+            axios.post("/api/horario/agendar",{add:add,funcionarioId:funcionarioId,corteId:corte.value,data:data}).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    
+                } else {
+                    alert(resp.data.erro)
+                }
+            })
+        }
+    }  
+
+
     window.addEventListener('load',listarHoratios())
 
     function listarHoratios() {
+        var funcionarioId = document.querySelector('input[name="barber"]:checked').value;
         var tableDias = document.getElementById("tableDias")
         var tableHorarios = document.getElementById("tableHorarios")
         var dataSelecionada = document.getElementById("dataSelecionada")
+        var add = document.getElementById("add")
+        var btnAnterior = document.getElementById("btnAnterior")
+        var btnProximo = document.getElementById("btnProximo")
 
-        axios.get('/api/horarios/listar').then(resp =>{
+        if (add.value > 0) {
+            btnAnterior.classList.remove('disabled')
+            if (add.value > 3) {
+                btnProximo.classList.add('disabled')
+            } else {
+                btnProximo.classList.remove('disabled')
+            }
+        } else {
+            btnAnterior.classList.add('disabled')
+            btnProximo.classList.remove("disabled")
+        }
+
+
+        axios.get(`/api/horarios/listar?add=${add.value}&funcionarioId=${funcionarioId}`).then(resp =>{
             var datas = resp.data.datas
             var horarios = resp.data.horarios
+            var horariosFunc = resp.data.horariosFunc
+            var horariosReservados = resp.data.horariosReservados
             //AQUIII ESQUECXENÃO AGORA É O FOREACH HORARIOS
 
             var rowsDatas = `<th></th>`
@@ -127,20 +153,48 @@
             });
             tableDias.innerHTML =  rowsDatas
             horarios.forEach(hora =>{
-                rowsHoras += `<tr><td class="bg-dark text-white">${hora}</td></tr>`
+                rowsHoras += `<tr id='${hora}'><td class="bg-dark text-white">${hora}</td></tr>`
             })
             tableHorarios.innerHTML = rowsHoras
 
            var trList = document.querySelectorAll('#tableHorarios tr');
                 trList.forEach(tr => {
                     for(index = 0;index< 7 ;index++){
+                        var dia = index+1
+                       
                         var td = document.createElement("td")
                         td.classList.add('text-center')
+                        var exist = horariosFunc.find( hf => 
+                        dia >= hf.range.split("-")[0] &&
+                        dia <= hf.range.split('-')[1] && 
+                        hf.horas.find(hfh =>
+                            hfh == tr.id
+                        ) != undefined)   
+                        if(exist != undefined){
+                            if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
+                                td.innerHTML = `-` 
+                            } else {
+                                
+                                td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
+                            }
+                        }else{
+                            td.innerHTML = `-` 
+                        }
+
+                        tr.insertBefore(td,null)
                         
                     }
                     
                 });
-         })
+
+               
+
+
+        }).catch(err =>{
+            console.log("err")
+            console.log(err)
+        })
+
 
     }
 </script>

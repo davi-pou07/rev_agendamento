@@ -69,14 +69,19 @@ app.get("/", async(req, res) => {
 
 app.get("/agendamento", async(req, res) => {
     
-    var {barberId,data} = req.query
+    var {barberId,data,corteId} = req.query
     var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
     data = (data == undefined)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:data
 
-    var exist = await Funcionario.findByPk(barberId)
-    barberId = (exist == undefined)?0:exist.id
+    var existFunc = await Funcionario.findByPk(barberId)
+    barberId = (existFunc == undefined)?0:existFunc.id
+    var existCort = await Corte.findByPk(corteId)
+    corteId = (existCort == undefined)?0:existCort.id
+
+    var cortes = await Corte.findAll({where:{status:true}})
     var barbers = await Funcionario.findAll({where:{status:true}})
-    res.render("agendamento",{barbers:barbers,barberId:barberId,data:data})
+
+    res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data})
  })
 
 app.get("/admin",authAdm, async(req, res) => {
