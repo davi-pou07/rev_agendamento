@@ -44,7 +44,7 @@
             </ul>
         </nav>
         <input type="hidden" name="data" id="dataSelecionada" value="<%=data%>">
-       <table class="table table-borderless table-hover mt-3">
+       <table class="table table-borderless table-hover mt-3" id="tableAgend">
            <thead>
                <tr id="tableDias">
                     <th></th>
@@ -117,14 +117,31 @@
 
         axios.get('/api/horarios/listar').then(resp =>{
             var datas = resp.data.datas
-            var horarios = resq.data.horarios
+            var horarios = resp.data.horarios
             //AQUIII ESQUECXENÃO AGORA É O FOREACH HORARIOS
-            var rows = `<th></th>`
+
+            var rowsDatas = `<th></th>`
+            var rowsHoras = ``
             datas.forEach(data => {
-                rows += `<th class="text-center ${(data == dataSelecionada.value)?'bg-success text-white':''}">${data}</th>`
+                rowsDatas += `<th id="${data}" class="text-center ${(data == dataSelecionada.value)?'bg-success text-white':''}">${data}</th>`
             });
-            tableDias.innerHTML =  rows
-        })
+            tableDias.innerHTML =  rowsDatas
+            horarios.forEach(hora =>{
+                rowsHoras += `<tr><td class="bg-dark text-white">${hora}</td></tr>`
+            })
+            tableHorarios.innerHTML = rowsHoras
+
+           var trList = document.querySelectorAll('#tableHorarios tr');
+                trList.forEach(tr => {
+                    for(index = 0;index< 7 ;index++){
+                        var td = document.createElement("td")
+                        td.classList.add('text-center')
+                        
+                    }
+                    
+                });
+         })
+
     }
 </script>
 <%-include ("./partials/scripts.ejs")%>
