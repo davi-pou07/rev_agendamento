@@ -11,6 +11,7 @@ const Funcionario = require('../Database/Funcionario')
 const Horario = require('../Database/Horario')
 const Corte = require('../Database/Corte')
 const Empresa = require('../Database/Empresa')
+const Reserva = require('../Database/Reserva')
 
 //================USUARIOS=====================
 
@@ -241,17 +242,77 @@ router.post("/funcionario",async(req,res)=>{
         return horas
     }
 
+    async function gerarHorariosFuncionario(funcionarioId,data) {
+        var lista = []
+        if (funcionarioId == undefined) {
+            var horariosGeral = await Horario.findAll()
+        }else{
+            var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
+            var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
+        }
+        horariosGeral.forEach(hora =>{
+            var horas = []
+            var primeira = moment(hora.as.split("-")[0],'h:m')
+            var ultima = moment(hora.as.split("-")[1],'h:m')
+            var indHora = primeira
+            var x = true
+            horas.push(primeira.format('HH:mm'))
+            while (x) {
+                if (indHora.add(30,'minutes').isSameOrBefore(ultima)) {
+                    horas.push(indHora.format('HH:mm'))
+                } else {
+                    x=false
+                }
+            }
+            lista.push({range:`${hora.de}-${hora.ate}`,funcionarioId:hora.funcionarioId,horas:horas})
+            
+        })
+
+        lista.forEach(async (list,index) =>{
+            var diaInicial = list.range.split('-')[0]
+            var diaFinal = list.range.split('-')[1]
+            var datasPeriodo = []
+            for (index = diaInicial; index < diaFinal; index++) {
+                datasPeriodo.push(moment(data).isoWeekday(index).format('DD/MM/YYYY'))
+            }
+
+            var reservas = await Reserva.findAll({where:{
+            status:true,
+            data:{
+                [Op.in]:datasPeriodo
+            },
+            hora:{
+                [Op.in]:list.horas
+            }
+            }})
+
+            if (reservas.length > 0 ) {
+                //PERTO PENSA AI
+            } else {
+                
+            }
+        })
+        console.log(lista)
+        return lista
+    }
+
+    
+
     router.get("/horarios/listar/",async(req,res)=>{
         var add = req.query.add
+        var funcionarioId = req.query.funcionarioId
+        var lista = await gerarHorariosFuncionario(funcionarioId)
         add = (add == undefined)?0:add
         var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
         var inicioSemana = moment().isoWeekday(1)
         var filtro = inicioSemana.add(add,'week')
+
+        
+       
         
         var empresa = await Empresa.findOne()
 
         var horarios = await gerarHorarios(empresa.as)
-        console.log(horarios)
 
         var datas = []
         var x = 0
