@@ -80,6 +80,11 @@ app.get("/agendamento", async(req, res) => {
 
     var cortes = await Corte.findAll({where:{status:true}})
     var barbers = await Funcionario.findAll({where:{status:true}})
+    for (let index = 0; index < barbers.length; index++) {
+        
+        var usuario = await User.findByPk(barbers[index].userId)
+        barbers[index].foto = usuario.foto
+    }
 
     res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data})
  })

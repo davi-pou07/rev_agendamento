@@ -3,16 +3,22 @@ const router = express.Router()
 
 const Sequelize = require('sequelize')
 const { Op } = require('sequelize')
+
 const User = require("../Database/User")
-const auth = require("../middlewares/auth")
-const moment = require("moment")
-const usuarioAdmin = require("../functions/usuarioAdmin")
 const Funcionario = require('../Database/Funcionario')
 const Horario = require('../Database/Horario')
 const Corte = require('../Database/Corte')
 const Empresa = require('../Database/Empresa')
 const Reserva = require('../Database/Reserva')
 
+const auth = require("../middlewares/auth")
+const moment = require("moment")
+
+const usuarioAdmin = require("../functions/usuarioAdmin")
+const gerarHorarios = require("../functions/gerarHorarios")
+const gerarHorariosFuncionario = require("../functions/gerarHorariosFuncionario")
+const gerarReservas = require("../functions/gerarReservas")
+const verificaFuncionarioDisponivel = require("../functions/verificaFuncionarioDisponivel")
 //================USUARIOS=====================
 
 router.get('/usuario/:userId',async(req,res)=>{
@@ -165,299 +171,251 @@ router.post("/funcionario",async(req,res)=>{
 //================FIM FUNCIONARIOS=====================
 
 //================HORARIO=====================
-    router.post("/horario/adicionar",async(req,res)=>{
-        if (await usuarioAdmin(req.session.user) != undefined) {
-            var {de,ate,as,funcionarioId} = req.body
-            if (de != '' && de != undefined && ate != '' && ate != undefined && as != '' && as != undefined && funcionarioId != '' && funcionarioId != undefined) {
-                    var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-                    if (funcionario != undefined) {
-                        var exist = await Horario.findOne({where:{funcionarioId:funcionario.id,de:de,ate:ate,as:as,status:true}})
-                        if (exist == undefined) {
-                            Horario.create({
-                                funcionarioId:funcionario.id,
-                                de:de,
-                                ate:ate,
-                                as:as,
-                                status:true
-                            }).then(()=>{
-                                res.json({resp:"Foi adicionado um novo horario"})
-                            }).catch(err =>{
-                                res.json({erro:"Ocorreu um erro ao salvar, tente novamente"})
-                            })
-                        } else {
-                            res.json({erro:"Horario ja cadastrado para esse funcionario"})
-                        }
+router.post("/horario/adicionar",async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {de,ate,as,funcionarioId} = req.body
+        if (de != '' && de != undefined && ate != '' && ate != undefined && as != '' && as != undefined && funcionarioId != '' && funcionarioId != undefined) {
+                var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
+                if (funcionario != undefined) {
+                    var exist = await Horario.findOne({where:{funcionarioId:funcionario.id,de:de,ate:ate,as:as,status:true}})
+                    if (exist == undefined) {
+                        Horario.create({
+                            funcionarioId:funcionario.id,
+                            de:de,
+                            ate:ate,
+                            as:as,
+                            status:true
+                        }).then(()=>{
+                            res.json({resp:"Foi adicionado um novo horario"})
+                        }).catch(err =>{
+                            res.json({erro:"Ocorreu um erro ao salvar, tente novamente"})
+                        })
                     } else {
-                        res.json({erro:"Funcionario não identificado ou status inativo"})
+                        res.json({erro:"Horario ja cadastrado para esse funcionario"})
                     }
-            } else {
-                res.json({erro:`Dados inválidos`}) 
-            }
-        } else {
-            res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
-        }
-    })
-
-    router.post("/horario/remover",async(req,res)=>{
-        if (await usuarioAdmin(req.session.user) != undefined) {
-            var {horarioId,funcionarioId} = req.body
-            if (funcionarioId != '' && funcionarioId != undefined && horarioId != '' && horarioId != undefined) {
-                    var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-                    if (funcionario != undefined) {
-                        var horario = await Horario.findOne({where:{funcionarioId:funcionario.id,id:horarioId}})
-                        if (horario != undefined) {
-                            Horario.destroy({where:{id:horario.id}}).then(()=>{
-                                res.json({resp:"Horario foi removido"})
-                            }).catch(err =>{
-                                res.json({erro:"Ocorreu um erro ao deletar, tente novamente"})
-                            })
-                        } else {
-                            res.json({erro:"Horario não foi identificado, recaregue a pagina e tente novamente"})
-                        }
-                    } else {
-                        res.json({erro:"Funcionario não identificado ou status inativo"})
-                    }
-            } else {
-                res.json({erro:`Dados inválidos`}) 
-            }
-        } else {
-            res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
-        }
-    })
-
-    async function gerarHorarios(hora) {
-        var primeira = moment(hora.split("-")[0],'h:m')
-        var ultima = moment(hora.split("-")[1],'h:m')
-        var hora = primeira
-        var x = true
-        var horas =[]
-        horas.push(primeira.format('HH:mm'))
-        while (x) {
-            if (hora.add(30,'minutes').isSameOrBefore(ultima)) {
-                horas.push(hora.format('HH:mm'))
-            } else {
-                x=false
-            }
-        }
-        return horas
-    }
-
-    async function gerarHorariosFuncionario(funcionarioId,data) {
-        var lista = []
-        if (funcionarioId == 0) {
-            var horariosGeral = await Horario.findAll()
-        }else{
-            var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-            var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
-        }
-        horariosGeral.forEach(hora =>{
-            var horas = []
-            var primeira = moment(hora.as.split("-")[0],'h:m')
-            var ultima = moment(hora.as.split("-")[1],'h:m')
-            var indHora = primeira
-            var x = true
-            horas.push(primeira.format('HH:mm'))
-            while (x) {
-                if (indHora.add(30,'minutes').isSameOrBefore(ultima)) {
-
-                    horas.push(indHora.format('HH:mm'))
                 } else {
-                    x=false
+                    res.json({erro:"Funcionario não identificado ou status inativo"})
                 }
-            }
-            hora.de = (hora.de < moment().isoWeekday() && data.isBefore(moment()))?moment().isoWeekday():hora.de
-            lista.push({range:`${hora.de}-${hora.ate}`,funcionarioId:hora.funcionarioId,horas:horas})
-            
-        })
-
-        return lista
+        } else {
+            res.json({erro:`Dados inválidos`}) 
+        }
+    } else {
+        res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
     }
+})
 
-    async function gerarReservas(funcionarioId,data) {
-        var lista = []
-        var reservados = []
-        var funcionariosIds = []
-        if (funcionarioId == 0) {
-            var horariosGeral = await Horario.findAll()
-        }else{
-            var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-            var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
-        }
-        var reservas = await Reserva.findAll({where:{status:true}})
-        for (let index = 0; index < reservas.length; index++) {
-            const reserva = reservas[index];
-            var corte = await Corte.findByPk(reserva.corteId)
-            var data = moment(reserva.data,'DD/MM/YYYY').format('YYYY-MM-DD')
-            if (moment(data).isSameOrAfter(moment().format("YYYY-MM-DD"))) {
-                reservados.push({
-                    hora:reserva.hora,
-                    dia: moment(reserva.data,'DD/MM/YYYY').isoWeekday(),
-                    tempo:corte.tempo,
-                    funcionarioId:reserva.funcionarioId
-                })
-            }
-        }
-        var remover = []
-        for (let i = 0; i < reservados.length; i++) {
-            const reserva = reservados[i];
-            
-            var x = 0
-            while(x < horariosGeral.length){
-                if(
-                    horariosGeral[x].funcionarioId != reserva.funcionarioId &&
-                    horariosGeral[x].de <= reserva.dia && horariosGeral[x].ate >= reserva.dia
-                ){
-                    if (reservados.find(r => r.funcionarioId == horariosGeral[x].funcionarioId && r.hora == reserva.hora && r.dia == reserva.dia) == undefined) {
-                        remover.push(reserva)
-                    }else{
-                        console.log("Outro cara vai trabalhar tambem")
+router.post("/horario/remover",async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {horarioId,funcionarioId} = req.body
+        if (funcionarioId != '' && funcionarioId != undefined && horarioId != '' && horarioId != undefined) {
+                var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
+                if (funcionario != undefined) {
+                    var horario = await Horario.findOne({where:{funcionarioId:funcionario.id,id:horarioId}})
+                    if (horario != undefined) {
+                        Horario.destroy({where:{id:horario.id}}).then(()=>{
+                            res.json({resp:"Horario foi removido"})
+                        }).catch(err =>{
+                            res.json({erro:"Ocorreu um erro ao deletar, tente novamente"})
+                        })
+                    } else {
+                        res.json({erro:"Horario não foi identificado, recaregue a pagina e tente novamente"})
                     }
+                } else {
+                    res.json({erro:"Funcionario não identificado ou status inativo"})
                 }
-                x++
-            }
-            
+        } else {
+            res.json({erro:`Dados inválidos`}) 
         }
-
-        reservados.filter(reserva => {
-            if (remover.find(r=> r == reserva) == undefined) {
-                if (lista.find(l => l.hora == reserva.hora && l.dia == reserva.dia) == undefined) {
-                    lista.push({
-                        hora:reserva.hora,
-                        dia:reserva.dia,
-                        tempo:reserva.tempo
-                    })
-
-                }
-            }
-        })
-
-        return lista
+    } else {
+        res.json({erro:`Nenhum usuario logado, gentileza efetue o login e tente novamente`}) 
     }
+})
 
-    router.get("/horarios/listar",async(req,res)=>{
-        var add = req.query.add
-        var funcionarioId = req.query.funcionarioId
-        funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
-        add = (add == undefined || add == 0)?0:add
-
-        var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
-        var inicioSemana = moment().isoWeekday(1)
-        var filtro = inicioSemana.add(add,'week')
-        //console.log(filtro)
-
-        
-        var horariosFunc = await gerarHorariosFuncionario(funcionarioId,filtro)
-        //console.log("horariosFunc")
-        //console.log(horariosFunc)
-        
-        var empresa = await Empresa.findOne()
-
-        var horarios = await gerarHorarios(empresa.as)
-
-        var horariosReservados = await gerarReservas(funcionarioId,filtro)
-        //console.log("horariosReservados?????????????????")
-        //console.log(horariosReservados)
-        var datas = []
-        var x = 0
-        while(x < 7){
-            datas.push(`${dias[x]} ${filtro.isoWeekday(x+1).format('DD/MM')}`)
-            x++
-        }
-        res.json({datas:datas,horarios:horarios,horariosFunc:horariosFunc,horariosReservados:horariosReservados})
-    })
+router.get("/horarios/listar",async(req,res)=>{
+    var add = req.query.add
+    var funcionarioId = req.query.funcionarioId
+    funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
+    add = (add == undefined || add == 0)?0:add
+    var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+    var inicioSemana = moment().isoWeekday(1)
+    var filtro = inicioSemana.add(add,'week')
+    //console.log(filtro)
+    
+    var horariosFunc = await gerarHorariosFuncionario(funcionarioId,filtro)
+    //console.log("horariosFunc")
+    //console.log(horariosFunc)
+    
+    var empresa = await Empresa.findOne()
+    var horarios = await gerarHorarios(empresa.as)
+    var horariosReservados = await gerarReservas(funcionarioId,filtro)
+    //console.log("horariosReservados?????????????????")
+    //console.log(horariosReservados)
+    var datas = []
+    var x = 0
+    while(x < 7){
+        datas.push(`${dias[x]} ${filtro.isoWeekday(x+1).format('DD/MM')}`)
+        x++
+    }
+    res.json({datas:datas,horarios:horarios,horariosFunc:horariosFunc,horariosReservados:horariosReservados})
+})
 
 router.post("/horario/agendar",async(req,res)=>{
+    //ERROS = 1-RELOAD; 2-LOGIN; 3-SOMENTE MOSTRAR
+    var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
     var {data,funcionarioId,corteId,add} = req.body
-
+    var userId = req.session.user
+    //Separa dia e hora
     var dia = data.split(' ')[0]
     var hora = data.split(" ")[1]
-    console.log(hora)
+
+    //Valida dados vazios
     if (data == undefined || data == '' ||  corteId == undefined || corteId == 0) {
-        return res.json({erro:"Dados inválidos, gentileza recarregue a pagina e tente novamente"})
+        return res.json({erroId:1,erro:"Dados inválidos, gentileza tente novamente!"})
     }
 
+    //Valida Id funcionario e a semana selecionada
     funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
     add = (add == undefined || add <= 0)?0:add
 
+    //Verifica se a data é anterior a atual
     var inicioSemana = moment().isoWeekday(1)
     var inicioSemanaSelecionada = inicioSemana.add(add,'week')
     var dataSelecionada = moment(inicioSemanaSelecionada).isoWeekday(parseInt(dia))
 
     if (dataSelecionada.isBefore(moment().format('YYYY-MM-DD'))) {
-        return res.json({erro:'Data selecionada é anterior da data atual'})
+        return res.json({erroId:1,erro:'Data selecionada é anterior da data atual'})
     }else if (add == 0 && moment().isoWeekday() == dia && moment(hora,'HH:mm').isBefore(moment())){
-        return res.json({erro:'Horario selecionado é anterior ao horario atual'})
+        return res.json({erroId:1,erro:'Horario selecionado é anterior ao horario atual'})
     }
 
+    //Verifica um funcionario disponivel no horario solicitado
     if (funcionarioId == 0) {
         var horariosGeral = await Horario.findAll({ where: { de: { [Op.lte]: dia }, ate: { [Op.gte]: dia } } })
     }else{
         var func = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
         var horariosGeral = await Horario.findAll({where:{funcionarioId:func.id ,de: { [Op.lte]: dia }, ate: { [Op.gte]: dia } }})
     }
-    var funcionarioDisponivel = []
+
     if (horariosGeral == undefined) {
-        return res.json({erro:'Não foi encontrado nenhum funcionario disponivel para essa data'})
+        return res.json({erroId:1,erro:'Não foi encontrado nenhum funcionario disponivel para essa data'})
     } else {
-        for (let i = 0; i < horariosGeral.length; i++) {
-            var horario = horariosGeral[i];
-            var funcionario = await Funcionario.findOne({where:{id:horario.funcionarioId,status:true}})
-            if (funcionario != undefined) {
-                var horaProcurada = moment(hora,'HH:mm')
-                var inicio = moment(horario.as.split('-')[0],'HH:mm')
-                var fim = moment(horario.as.split('-')[1],'HH:mm')
-                var condicao = true
-                if (inicio.isSame(horaProcurada)) {
-                    funcionarioDisponivel.push(funcionario.id)
-                    condicao = false
-                }
-                var index = inicio
-                while (condicao) {
-                    if (index.add(30,'minutes').isSameOrBefore(fim)) {
-                        if (index.isSame(horaProcurada)) {
-                            funcionarioDisponivel.push(funcionario.id)
-                            condicao = false
-                        }
-                    } else {
-                        condicao=false
-                    }
-                }
-            }
-        }
+        var funcionarioDisponivel = await verificaFuncionarioDisponivel(horariosGeral,hora)
     }
     var barber = ''
     for (let i = 0; i < funcionarioDisponivel.length; i++) {
-        const funcionarioId = funcionarioDisponivel[i];
-        var exist = await Reserva.findOne({where:{data:dataSelecionada.format("DD/MM/YYYY"),status:true,funcionarioId:funcionarioId,hora:hora}})
+        const funcId = funcionarioDisponivel[i];
+        var exist = await Reserva.findOne({where:{data:dataSelecionada.format("DD/MM/YYYY"),status:true,funcionarioId:funcId,hora:hora}})
         if (exist == undefined) {
-            barber = funcionarioId
+            barber = funcId
             i = funcionarioDisponivel.length
         }
     }
-
     if (barber != '') {
+        if (userId == undefined) {
+            data = `${dias[parseInt(data.split(' ')[0])-1]} ${dataSelecionada.format('DD/MM')}`
+            req.session.agendamento = {data:data,funcionarioId:barber,corteId:corteId,add:add}
+            return res.json({erroId:2,erro:'Você será redirecionado para realizar seu login'})
+        }else{
+            var usuario = await User.findByPk(userId)
+            if (usuario != undefined && usuario.status == true) {
+                if (usuario.isAdmin != true) {
+                    var existReserva = await Reserva.findOne({where:{status:true,userId:usuario.id}})
+                    if (existReserva != undefined) {
+                        return res.json({erroId:3,erro:'Você ja tem uma reserva pendente. Verifique no seu cadastro!'})
+                    }
+                }
+            } else {
+                data = `${dias[parseInt(data.split(' ')[0])-1]} ${dataSelecionada.format('DD/MM')}`
+                req.session.agendamento = {data:data,funcionarioId:barber,corteId:corteId,add:add}
+                return res.json({erroId:2,erro:'Não foi possivel identificar usuario logado. Gentileza realize login novamente'})
+            }
+        }
+        
         Reserva.create({
             corteId:corteId,
             data:dataSelecionada.format("DD/MM/YYYY"),
             hora:hora,
             funcionarioId:barber,
             status:true,
-            userId:1
+            userId:userId
         }).then(()=>{
-            res.json({erro:'Deu certo garoto'})
+            res.json({resp:'Deu certo garoto'})
+        }).catch(err =>{
+            res.json({erro:'Ocorreu um erro ao salvar'})
         })
+
     } else {
         res.json({erro:'Esse horario ja está reservado'})
     }
     
+})
 
-    // var userId = req.session.user
-    // if (userId == undefined) {
-    //     req.session.agendamento = {data:data,funcionarioId:funcionarioId,corteId:corteId,add:add}
-    //     res.json({erroId:1,erro:'Você será redirecionado para realizar seu login'})
-    // } else {
-    //     var disponivel = await Horario.findOne({ where: { de: { [Op.lte]: dia }, ate: { [Op.gte]: dia } } })
-    // }
+router.get("/reserva/:reservaId",async(req,res)=>{
+    var reservaId = req.params.reservaId
+    var userId = req.session.user
+    if (reservaId != undefined) {
+        if (userId != undefined) {
+            var user = await User.findOne({where:{id:userId,status:true}})
+            if (user != undefined) {
+                var reserva = await Reserva.findOne({where:{userId:user.id,id:reservaId}})
+                if (reserva != undefined) {
+                    var barber = await Funcionario.findByPk(reserva.funcionarioId)
+                    if (barber != undefined) {
+                        var corte = await Corte.findByPk(reserva.corteId)
+                        if (corte != undefined) {
+                            res.json({reserva:reserva,corte:corte,barber:barber,dataCri:moment(reserva.createdAt).format("DD/MM/YYYY HH:mm")})
+                        } else {
+                            res.json({erro:"Não foi possivel encontrar corte dessa reserva. Gentileza entre em contato em nossos canais de atendimento"})
+                        }
+                    } else {
+                        res.json({erro:"Não foi possivel encontrar funcionario dessa reserva. Gentileza entre em contato em nossos canais de atendimento"})
+                    }
+                } else {
+                    res.json({erro:"Não foi possivel identificar reserva realizada"})
+                }
+            } else {
+                res.json({erro:"Sessão expirada. Faça o login e tente novamente"})
+            }
+        } else {
+            res.json({erro:"Sessão expirada. Faça o login e tente novamente"})
+        }
+    } else {
+        res.json({erro:"Parametros inválidos"})
+    }
+})
+
+
+router.post("/reserva/cancelar",async(req,res)=>{
+    var reservaId = req.body.reservaId
+    var userId = req.session.user
+    if (reservaId != undefined) {
+        if (userId != undefined) {
+            var user = await User.findOne({where:{status:true,id:userId}})
+            if (user != undefined) {
+                var reserva = await Reserva.findOne({where:{status:true,userId:user.id,id:reservaId}})
+                if (reserva != undefined) {
+                    Reserva.update({
+                        status:false
+                    },{where:{
+                        id:reserva.id
+                    }}).then(()=>{
+                        res.json({resp:'Reserva cancelada'})
+                    }).catch(err =>{
+                        res.json({erro:"Ocorreu um erro ao cancelar, tente novamente"})
+                    })
+                } else {
+                    res.json({erro:"Não foi possivel identificar reserva informada"})
+                }                
+            } else {
+                res.json({erro:"Sessão expirada. Faça o login e tente novamente"})
+            }
+        } else {
+            res.json({erro:"Sessão expirada. Faça o login e tente novamente"})
+            
+        }
+    } else {
+        res.json({erro:"Parametros inválidos"})
+    }
 })
 //================FIM HORARIO=====================
 

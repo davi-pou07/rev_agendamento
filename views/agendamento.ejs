@@ -1,4 +1,15 @@
 <%-include ("./partials/head.ejs")%>
+
+<style>
+    .personal-figure {
+    width: 30px;
+    height: 30px;
+  }
+  .personal-avatar {
+    width: 30px;
+    height: 30px;
+  }
+</style>
 <%-include ("./partials/nav.ejs")%>
 <main>
     <div class="container">
@@ -11,7 +22,13 @@
                     <div class="col-sm-6 col-md-4">
                         <div class="input-group">
                         <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
-                        <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
+                        <div class="personal-image">
+                            <label class="label">
+                                <figure class="personal-figure">
+                                    <img src="/img/user.jpg" id="foto" class="personal-avatar"width="40px" alt="">
+                                </figure>
+                            </label>
+                        </div>
                         <span class="ms-2 px-1">
                             <label class="fw-bold">Todos</label><br>
                             <label for="" class="text-muted"></label>
@@ -21,12 +38,19 @@
                     <%barbers.forEach(barber =>{%>
                         <div class="col-sm-6 col-md-4">
                             <div class="input-group">
-                            <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
-                            <img src="/img/user.jpg" class="img-fluid" height="40px" width="40px" alt="">
-                            <span class="ms-2 px-1">
-                                <label class="fw-bold"><%=barber.apelido%></label><br>
-                                <label for="" class="text-muted">@<%=barber.ig%></label>
-                            </span>
+                                <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
+                                <div class="personal-image">
+                                    <label class="label">
+                                        <figure class="personal-figure">
+                                            <img src="<%=barber.foto%>" id="foto" class="personal-avatar"width="40px" alt="">
+                                        </figure>
+                                    </label>
+                                </div>
+                                
+                                <span class="ms-2 px-1">
+                                    <label class="fw-bold"><%=barber.apelido%></label><br>
+                                    <label for="" class="text-muted">@<%=barber.ig%></label>
+                                </span>
                             </div>
                         </div>
                     <%})%>
@@ -106,9 +130,15 @@
 
             axios.post("/api/horario/agendar",{add:add,funcionarioId:funcionarioId,corteId:corte.value,data:data}).then(resp =>{
                 if (resp.data.erro == undefined) {
-                    
+                    alert(resp.data.resp)
                 } else {
+                   
                     alert(resp.data.erro)
+                    if (resp.data.erroId == 1) {
+                        document.location.reload()
+                    } else if (resp.data.erroId == 2) {
+                        document.location = '/user/login'
+                    }
                 }
             })
         }
@@ -174,8 +204,12 @@
                             if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
                                 td.innerHTML = `-` 
                             } else {
-                                
-                                td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
+                                var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia)
+                                if (reservado == undefined) {
+                                    td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
+                                } else {
+                                    td.innerHTML = `-` 
+                                }
                             }
                         }else{
                             td.innerHTML = `-` 

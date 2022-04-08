@@ -17,6 +17,8 @@ const fs = require("fs")
 const ejs = require('ejs')
 const Empresa = require('../Database/Empresa')
 const Corte = require('../Database/Corte')
+const Reserva = require('../Database/Reserva')
+const Funcionario = require('../Database/Funcionario')
 
 var remetente = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -153,7 +155,13 @@ router.post("/user/login", async (req, res) => {
                 } catch (error) {
                     console.log(error)
                 }
-                res.redirect("/")
+                if (req.session.agendamento != undefined) {
+                    var agendamento = req.session.agendamento
+                    res.redirect(`/agendamento?barberId=${agendamento.funcionarioId}&corteId=${agendamento.corteId}&data=${agendamento.data}`)
+                } else {
+                    res.redirect("/")  
+                }
+                
             } else {
                 var erro = `Erro: Credenciais inválidas`
                 req.flash("erro", erro)
@@ -543,6 +551,34 @@ router.post("/user/alterar/", async (req, res) => {
     }
 })
 //==========================FIM ESQUECEU SENHA DE USUARIO==========================
+
+
+//===========================RESERVAS=========================
+router.get("/user/reservas",auth,async(req,res)=>{
+    var erro = req.flash('erro')
+    erro = (erro == undefined || erro.length == 0) ? undefined : erro
+
+    var userId = req.session.user
+
+    var usuario = await User.findOne({where:{id:userId,status:true}})
+    if (usuario != undefined) {
+        var reservas = await Reserva.findAll({where:{userId:usuario.id},order:[["createdAt",'DESC']]})
+        for (let index = 0; index < reservas.length; index++) {
+            var reserva = reservas[index];
+            var funcionario = await Funcionario.findByPk(reserva.funcionarioId)
+            var user = await User.findByPk(funcionario.userId)
+            reserva.foto = user.foto
+            reserva.apelido = funcionario.apelido
+            reserva.ig = funcionario.ig
+        }
+        res.render("user/reservas",{reservas:reservas,erro:erro})
+    } else {
+        var erro = 'Sessão expirada'
+        req.flash('erro',erro)
+        res.redirect('/user/login')
+    }
+})
+//==========================FIM RESERVAS==========================
 
 
 

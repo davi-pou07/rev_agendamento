@@ -1,0 +1,157 @@
+<%-include ("../partials/head.ejs")%>
+
+<style>
+    .personal-figure {
+    width: 30px;
+    height: 30px;
+  }
+  .personal-avatar {
+    width: 30px;
+    height: 30px;
+  }
+</style>
+<%-include ("../partials/nav.ejs")%>
+<main>
+    <div class="container">
+        <div class="card mt-5">
+            <div class="card-header bg-dark text-white">
+                <h2>Lista de reservas ja realizadas</h2>
+                <p>Vizualize abaixo todas suas reservas ja realizadas</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Barber</th>
+                                <th class="text-center">Data</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Vizualizar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%reservas.forEach(reserva =>{%>
+                                <tr class="align-middle">
+                                    <td class="text-center">
+                                        <div class="input-group">
+                                            <div class="personal-image ms-4 ms-sm-0">
+                                                <label class="label">
+                                                    <figure class="personal-figure">
+                                                        <img src="<%=reserva.foto%>" id="foto" class="personal-avatar" alt="">
+                                                    </figure>
+                                                </label>
+                                            </div>
+                                            <span class="ms-sm-2 px-1">
+                                                <label class="fw-bold text-nowrap"><%=reserva.apelido%></label><br>
+                                                <label for="" class="text-muted"><%=reserva.ig%></label>
+                                            </span>
+    
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <%=reserva.data%> <%=reserva.hora%>
+                                    </td>
+                                    <td class="text-center">
+                                        <%-(reserva.status == true)?`<button class="btn btn-danger" data-bs-toggle="modal" value="${reserva.id}" onclick="cancelarReserva(this.value)" data-bs-target="#modalCancelar">Cancelar</button>`:'<button class="btn btn-white disabled">Realizado</button>'%>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-primary" data-bs-toggle="modal" value="<%=reserva.id%>" onclick="vizualizarReserva(this.value)" data-bs-target="#modalDetalhes">Vizualizar</button>
+                                    </td>
+                                </tr>
+                            <%})%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDetalhesLabel"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <h4>Barbeiro</h4>
+                  <div class="col-12 my-2">
+                    <p class="my-0 fw-bolder" id="barberApelido"></p> 
+                    <p class="my-0 text-muted" id="barberIg"></p> 
+                  </div>
+                  <hr>
+                  <h4>Corte</h4>
+                  <div class="col-12 my-2">
+                    <p class="my-0" id="corteNome"></p> 
+                    <p class="my-0" id="corteDuracao"></p> 
+                    <p class="my-0" id="cortePreco"></p> 
+                  </div>
+                  <hr>
+                  <h4>Agendamento</h4>
+                  <div class="col-12 my-2">
+                    <p class="my-0" id="agendamentoData"></p> 
+                    <p class="my-0" id="agendamentoStatus"></p> 
+                    <p class="my-0" id="agendamentoSolit"></p> 
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="btnFechar" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</main>
+<script>
+function cancelarReserva(reservaId) {
+  if (confirm("Deseja realmente cancelar essa reserva?")) {
+      if (reservaId != undefined) {
+          axios.post('/api/reserva/cancelar',{reservaId:reservaId}).then(resp =>{
+              if (resp.data.erro == undefined) {
+                  alert(resp.data.resp)
+                  document.location.reload()
+              } else {
+                  alert(resp.data.erro)
+                  document.location.reload()
+              }
+          })
+      }else{
+          document.location.reload()
+      }
+  }  
+}
+
+function vizualizarReserva(reservaId) {
+    if (reservaId != undefined) {
+        axios.get(`/api/reserva/${reservaId}`).then(resp =>{
+            if (resp.data.erro == undefined) {
+                var reserva = resp.data.reserva
+                var barber = resp.data.barber
+                var corte = resp.data.corte
+
+                var modalDetalhesLabel = document.getElementById("modalDetalhesLabel").innerHTML =  `Detalhes reserva nº ${reserva.id}`
+                var agendamentoData = document.getElementById("agendamentoData").innerHTML = `Data reservada: ${reserva.data} ${reserva.hora}`
+                var agendamentoStatus = document.getElementById("agendamentoStatus").innerHTML = `Status: ${(reserva.status == true) ? 'Pendente':'Finalizada'}`
+                var agendamentoSolit = document.getElementById("agendamentoSolit").innerHTML = `Data solicitação: ${resp.data.dataCri}`
+
+                var barberApelido = document.getElementById("barberApelido").innerHTML = barber.apelido
+                var barberIg = document.getElementById("barberIg").innerHTML = `@${barber.ig}`
+
+                var corteNome = document.getElementById("corteNome").innerHTML = `Corte: ${corte.nome}`
+                var corteDuracao = document.getElementById("corteDuracao").innerHTML = `Duração: ${corte.tempo} <span class="text-multed">HH:MM</span>`
+                var cortePreco = document.getElementById("cortePreco").innerHTML = `Preço: R$ ${parseFloat(corte.preco).toFixed(2)}`
+
+
+            }else{
+                alert(resp.data.erro)
+                document.getElementById("btnFechar").click()
+            }
+        })
+    } else {
+        document.location.reload()        
+    }
+}
+</script>
+<%-include ("../partials/scripts.ejs")%>
