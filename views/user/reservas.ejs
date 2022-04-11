@@ -52,7 +52,7 @@
                                         <%=reserva.data%> <%=reserva.hora%>
                                     </td>
                                     <td class="text-center">
-                                        <%-(reserva.status == true)?`<button class="btn btn-danger" data-bs-toggle="modal" value="${reserva.id}" onclick="cancelarReserva(this.value)" data-bs-target="#modalCancelar">Cancelar</button>`:'<button class="btn btn-white disabled">Realizado</button>'%>
+                                        <%-(reserva.status == true)?`<button class="btn btn-danger" data-bs-toggle="modal" value="${reserva.id}" onclick="cancelarReserva(this.value)" data-bs-target="#modalCancelar">Cancelar</button>`:'<button class="btn btn-white disabled">Finalizada</button>'%>
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-primary" data-bs-toggle="modal" value="<%=reserva.id%>" onclick="vizualizarReserva(this.value)" data-bs-target="#modalDetalhes">Vizualizar</button>

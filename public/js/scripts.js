@@ -30,6 +30,7 @@ function usuarioLogado() {
 function empresa() {
   axios.get("/api/empresa").then(resp =>{
     document.getElementById("logo").src = resp.data.empresa.logo
+    document.getElementById("whats").href = `https://api.whatsapp.com/send?phone=+550${resp.data.empresa.whats}&text=Tenho uma duvida!`
   })
 }
 

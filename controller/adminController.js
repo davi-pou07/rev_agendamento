@@ -17,6 +17,7 @@ const validator = require("validator")
 const Banner = require('../Database/Banner')
 const Postagem = require('../Database/Postagem')
 const Corte = require('../Database/Corte')
+const Reserva = require('../Database/Reserva')
 
 //=============== USUARIOS =======================
 
@@ -435,6 +436,47 @@ router.get("/cortes",authAdm,async(req,res)=>{
     res.render("admin/cortes/cortes",{cortes:cortes,erro:erro})
 })
 //=============FIM CORTES========================
+
+//=============RESERVAS========================
+
+router.get("/reservas",authAdm,async(req,res)=>{
+    //filtro 0 = pendentes, 1 = todos, 2 = finalizados , 3 = administrativos
+    var {barberId,filtro} =req.query
+
+    var barber =  (barberId == undefined)?undefined:await Funcionario.findByPk(barberId)
+
+    var adminIds = []
+    var users = await User.findAll({where:{isAdmin:true}})
+    users.forEach(user =>{
+        adminIds.push(user.id)
+    })
+
+    filtro = (filtro == undefined && barberId != undefined)?0:filtro
+    switch (filtro) {
+        case 0:
+            var reservas = await Reserva.findAll({where:{status:true,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
+            break;
+        case 1:
+            var reservas = await Reserva.findAll({where:{funcionarioId:barberId}})
+            break;
+        case 2:
+            var reservas = await Reserva.findAll({where:{status:false,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
+
+            break;
+        case 3:
+            var reservas = await Reserva.findAll({where:{funcionarioId:barberId,userId:{[Op.in]:adminIds}}})
+            break;
+        default:
+            var reservas =  undefined
+            break;
+    }
+
+    var funcionarios = await Funcionario.findAll()
+   
+    res.render("admin/reservas/reservas",{barber:barber,reservas:reservas,funcionarios:funcionarios,filtro:filtro})
+})
+
+//=============FIM RESERVAS========================
 
 
 module.exports = router

@@ -107,7 +107,12 @@ router.post("/user/registrar", async (req, res) => {
             numero: numero
         }).then(user => {
             req.session.user = user.id
-            res.redirect('/')
+            if (req.session.agendamento != undefined) {
+                var agendamento = req.session.agendamento
+                res.redirect(`/agendamento?barberId=${agendamento.funcionarioId}&corteId=${agendamento.corteId}&data=${agendamento.data}`)
+            } else {
+                res.redirect("/")  
+            }
         }).catch(err => {
             console.log(err)
             erro = `Ocorreu um erro ao criar um novo usuario \n${err}`

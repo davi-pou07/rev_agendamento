@@ -60,7 +60,7 @@
             </div>
             <div class="col-md-6 mt-3">
                 <label for="whats" class="form-label"><span data-feather="smartphone"></span> Whatsapp</label>
-                <input value="<%=(empresa != null)?empresa.whats:''%>" type="text" class="form-control" onkeypress="$(this).mask('(00) 00000-0000')" name="whats" id="whats" maxlength="15" required/>
+                <input value="<%=(empresa != null)?empresa.whats:''%>" type="text" class="form-control" onkeypress="$(this).mask('00000000000')" name="whats" id="whats" maxlength="15" required/>
                 <div class="invalid-feedback">
                     Dados vazios
                 </div>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="col-md-6 mt-3">
-                <label for="ig" class="form-label"><span data-feather="instagram"></span> Link Instagram</label>
+                <label for="ig" class="form-label"><span data-feather="instagram"></span> Ig Instagram</label>
                 <input value="<%=(empresa != null)?empresa.ig:''%>" type="text" class="form-control"  name="ig" id="ig"  required/>
                 <div class="invalid-feedback">
                     Dados vazios

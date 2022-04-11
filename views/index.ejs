@@ -33,8 +33,8 @@
               <div class="col">
                 <div class="card mb-4 rounded-3 shadow-sm border-primary">
                   <div class="card-header py-3 text-white bg-primary border-primary">
-                    <h4 class="my-0 fw-normal"><%=corte.nome%></h4>
-                    <p class="text-muted my-2"><%=corte.descricao%></p>
+                    <h4 class="my-0 fw-bolder"><%=corte.nome%></h4>
+                    <p class="my-2 fw-normal"><%=corte.descricao%></p>
                   </div>
                   <div class="card-body">
                     <h1 class="card-title pricing-card-title">R$<%=parseFloat(corte.preco).toFixed(2)%></h1>
@@ -42,7 +42,7 @@
                       <li>Tempo de duração</li>
                       <li><%=corte.tempo%></li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary">Agendar</button>
+                    <a href="/agendamento/?corteId=<%=corte.id%>" class="w-100 btn btn-lg btn-primary">Agendar</a>
                   </div>
                 </div>
               </div>
@@ -69,59 +69,72 @@
 
         <div class="card mt-3" id="horarios">
           <div class="card-header">
-            <h1>Horarios</h1>
+            <h1>Agendamento</h1>
             <div class="form-floating mb-3">
               <input type="date" id="data" class="form-control form-control-lg">
               <label for="data">Informe uma data</label>
             </div>
-            <span class="badge bg-success">Livre</span>
-            <span class="badge bg-danger">Ocupado</span>
-            <span class="badge bg-warning">Pausa</span>
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-12">
-                <h3>Manhã</h3>
-                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck1">09:00</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck2">09:30</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck3">10:00</label>
-              </div>
-
-              <div class="col-12 my-2">
-                <h3>Tarde</h3>
-                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck1">13:00</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck2">13:30</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck3">14:00</label>
-              </div>
-
-              <div class="col-12 my-2">
-                <h3>Noite</h3>
-                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck1">18:00</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck2">18:30</label>
-
-                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                <label class="btn btn-outline-success" for="btncheck3">19:00</label>
-              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="input-group">
+                <input class="me-2" type="radio" name="barber" checked value="0" id="examplradio1">
+                <div class="personal-image">
+                    <label class="label">
+                        <figure class="personal-figure">
+                            <img src="/img/user.jpg" id="foto" class="personal-avatar"width="40px" alt="">
+                        </figure>
+                    </label>
+                </div>
+                <span class="ms-2 px-1">
+                    <label class="fw-bold">Todos</label><br>
+                    <label for="" class="text-muted"></label>
+                </span>
+                </div>
+            </div>
+            <%barbers.forEach(barber =>{%>
+                <div class="col-sm-6 col-md-4">
+                    <div class="input-group">
+                        <input class="me-2" type="radio" name="barber" value="<%=barber.id%>" id="examplradio1">
+                        <div class="personal-image">
+                            <label class="label">
+                                <figure class="personal-figure">
+                                    <img src="<%=barber.foto%>" id="foto" class="personal-avatar"width="40px" alt="">
+                                </figure>
+                            </label>
+                        </div>
+                        
+                        <span class="ms-2 px-1">
+                            <label class="fw-bold"><%=barber.apelido%></label><br>
+                            <label for="" class="text-muted">@<%=barber.ig%></label>
+                        </span>
+                    </div>
+                </div>
+            <%})%>
             </div>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary">Agendar</button>
+            <button id="btnAgendar" onclick="redirect()" class="btn btn-primary">Agendar</button>
           </div>
         </div>
       </div>
     </main>
     <%-include ("./partials/footer.ejs")%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script>
+      function redirect(){
+        var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+        var barberId = document.querySelector('input[name="barber"]:checked').value;
+        var data = document.getElementById("data").value
+        if (data != '') {
+          var iso = moment(data,'YYYY-MM-DD')
+          data = `${dias[parseInt(iso.isoWeekday())-1]} ${iso.format('DD/MM')}`
+
+        }else{
+          data = 0
+        }
+        document.location =  `/agendamento/?data=${data}&barberId=${barberId}`
+      }
+    </script>
       <%-include ("./partials/scripts.ejs")%>

@@ -27,6 +27,7 @@ const PORT = 6060
 
 const moment =  require('moment')
 const authAdm = require("./middlewares/authAdm")
+const auth = require('./middlewares/auth')
 
 app.use(cookieParser("asdfasfdasfaz"))
 app.use(session({
@@ -60,18 +61,47 @@ app.get("/", async(req, res) => {
         var postagens = await Postagem.findAll({where:{status:true}})
         var cortes = await Corte.findAll({where:{status:true},order: [['preco', 'asc']]})
         var empresa = await Empresa.findOne() 
+        var barbers = await Funcionario.findAll({where:{status:true}})
+        for (let index = 0; index < barbers.length; index++) {
+            var usuario = await User.findByPk(barbers[index].userId)
+            barbers[index].foto = usuario.foto
+        }
     } catch (error) {
         console.log(error)
     }
    
-   res.render("index",{banners:banners,postagens:postagens,cortes:cortes,empresa:empresa})
+   res.render("index",{banners:banners,postagens:postagens,cortes:cortes,empresa:empresa,barbers:barbers})
 })
 
 app.get("/agendamento", async(req, res) => {
     
     var {barberId,data,corteId} = req.query
     var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
-    data = (data == undefined)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:data
+    data = (data == undefined || data == 0)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:data
+
+    var dataFilt = moment(data.split(' ')[1],'DD/MM').isoWeekday(1)
+    var before = moment().add(3,'week')
+    if (before.isBefore(dataFilt)) {
+        data = `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`
+    }
+    var f = true
+    var add = 0
+    while (f) {
+        var inicioSemana = moment().isoWeekday(1)
+        var filtro = inicioSemana.add(add,'w')
+        if (dataFilt.isBefore(filtro) == false && add < 4) {
+            console.log("mais um???")
+            if (filtro.format('DD/MM/YYYY') == dataFilt.format('DD/MM/YYYY')) {
+                f = false
+            }else{
+                add = add + 1
+            }
+        } else {
+            console.log("mais um")
+            f = false
+        }
+    }
+
 
     var existFunc = await Funcionario.findByPk(barberId)
     barberId = (existFunc == undefined)?0:existFunc.id
@@ -81,12 +111,14 @@ app.get("/agendamento", async(req, res) => {
     var cortes = await Corte.findAll({where:{status:true}})
     var barbers = await Funcionario.findAll({where:{status:true}})
     for (let index = 0; index < barbers.length; index++) {
-        
         var usuario = await User.findByPk(barbers[index].userId)
         barbers[index].foto = usuario.foto
     }
+    res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data,add:add})
+ })
 
-    res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data})
+ app.get("/sucesso",auth,(req,res)=>{
+     res.render("sucesso")
  })
 
 app.get("/admin",authAdm, async(req, res) => {
@@ -94,6 +126,26 @@ app.get("/admin",authAdm, async(req, res) => {
     erro = (erro == undefined || erro.length == 0)?undefined:erro
     res.render("admin/index",{erro:erro})
  })
+
+
+
+setInterval(async function () {
+    var hoje = moment()
+    var reservas = await Reserva.findAll({where:{status:true}})
+    reservas.forEach(async reserva =>{
+        var dataAgend = moment(reserva.data,'DD/MM/YYYY')
+        dataAgend.set('hour',parseInt(reserva.hora.split(':')[0]))
+        dataAgend.set('minute',parseInt(reserva.hora.split(':')[1]))
+        
+        if(moment(hoje).isAfter(dataAgend)){
+            var update = await Reserva.update({status:false},{where:{id:reserva.id}})
+            console.log(`Atualizado reserva ${reserva.id}`)
+        }
+    })
+  }, 900000);
+
+
+
 
 app.listen(PORT, () => {
     console.log("Servidor ligado")

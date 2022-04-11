@@ -339,6 +339,7 @@ router.post("/horario/agendar",async(req,res)=>{
             status:true,
             userId:userId
         }).then(()=>{
+            req.session.agendamento = 0
             res.json({resp:'Deu certo garoto'})
         }).catch(err =>{
             res.json({erro:'Ocorreu um erro ao salvar'})

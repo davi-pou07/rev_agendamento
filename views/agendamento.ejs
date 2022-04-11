@@ -73,7 +73,7 @@
               <li class="page-item disabled" id="btnAnterior">
                 <button class="page-link" onclick="alteraSemana('s')"><span data-feather="arrow-left"></span> Anterior</button>
               </li>
-              <input type="hidden" name="add" id="add" value="0">
+              <input type="hidden" name="add" id="add" value="<%=add%>">
               <li class="page-item" id="btnProximo">
                 <button class="page-link" onclick="alteraSemana('a')">Proximo <span data-feather="arrow-right"></span></button>
               </li>
@@ -130,7 +130,7 @@
 
             axios.post("/api/horario/agendar",{add:add,funcionarioId:funcionarioId,corteId:corte.value,data:data}).then(resp =>{
                 if (resp.data.erro == undefined) {
-                    alert(resp.data.resp)
+                    document.location.href = '/sucesso'
                 } else {
                    
                     alert(resp.data.erro)
@@ -175,8 +175,9 @@
             var horariosFunc = resp.data.horariosFunc
             var horariosReservados = resp.data.horariosReservados
             //AQUIII ESQUECXENÃO AGORA É O FOREACH HORARIOS
-
-            var rowsDatas = `<th></th>`
+            console.log(horariosFunc)
+            console.log(horariosReservados)
+            var rowsDatas = `<th>Horas</th>`
             var rowsHoras = ``
             datas.forEach(data => {
                 rowsDatas += `<th id="${data}" class="text-center ${(data == dataSelecionada.value)?'bg-success text-white':''}">${data}</th>`
@@ -204,7 +205,7 @@
                             if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
                                 td.innerHTML = `-` 
                             } else {
-                                var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia)
+                                var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia && hr.add == add.value)
                                 if (reservado == undefined) {
                                     td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
                                 } else {

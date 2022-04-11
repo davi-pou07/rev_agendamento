@@ -1,0 +1,55 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Reservas</h1>
+      </div>
+      <div class="container">
+        <div class="row mt-3">
+            <div class="col-12">
+                <label for="barber" class="form-label">Barber</label>
+                <select class="form-select form-select-lg mb-3">
+                  <option value="0" <%=(barber != undefined)?'':'selected'%> >Selecione um dos funcionarios</option>
+                  <%if(funcionarios.length > 0){%>
+                      <%funcionarios.forEach(funcionario =>{%>
+                          <option value="<%=funcionario.id%>" <%=(barber != undefined && barber.id == funcionario.id)?'selected':''%>><%=funcionario.apelido%></option>
+                      <%})%>
+                  <%}else{%>
+                      <option value="0">GENTILEZA CADASTRAR UM FUNCIONARIO</option>
+                  <%}%>
+                </select>
+            </div>
+            <ul class="nav nav-pills flex-column flex-sm-row">
+              <li class="nav-item">
+                <a class="nav-link <%=(filtro == 0)?'active':''%>" href="?filtro=0&barberId">Pendentes</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%=(filtro == 1)?'active':''%>" href="?filtro=1&barberId">Todos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%=(filtro == 2)?'active':''%>" href="?filtro=2&barberId">Finalizados</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%=(filtro == 3)?'active':''%>" href="?filtro=3&barberId">Administrativos</a>
+              </li>
+            </ul>
+
+            <%if(reservas != undefined){%>
+                <table id="table" class="table ty-5">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Data Reservada</th>
+                            <th>Status</th>
+                            <th>Data Solicitação</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                </table>
+            <%}%>
+        </div>
+    </div>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<%-include ('../../partials/scripts.ejs')%>
