@@ -26,8 +26,8 @@ const Horario = connection.define('horarios',{
 
 })
 
-Horario.sync({force: true }).then(()=>{
-    console.log("Tabela Horario criada")
-})
+// Horario.sync({force: true }).then(()=>{
+//     console.log("Tabela Horario criada")
+// })
 
 module.exports = Horario

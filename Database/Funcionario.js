@@ -22,8 +22,8 @@ const Funcionario = connection.define('funcionarios',{
 
 })
 
-Funcionario.sync({alter: true }).then(()=>{
-    console.log("Tabela Funcionario criada")
-})
+// Funcionario.sync({alter: true }).then(()=>{
+//     console.log("Tabela Funcionario criada")
+// })
 
 module.exports = Funcionario

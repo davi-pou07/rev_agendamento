@@ -18,8 +18,8 @@ const Banner = connection.define('banners',{
 
 })
 
-Banner.sync({force: true }).then(()=>{
-    console.log("Tabela Banner criada")
-})
+// Banner.sync({force: true }).then(()=>{
+//     console.log("Tabela Banner criada")
+// })
 
 module.exports = Banner

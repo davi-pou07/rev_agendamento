@@ -23,7 +23,7 @@ const adminController = require("./controller/adminController")
 const apiController = require("./controller/apiController")
 //databases
 const path = require('path')
-const PORT = 6060
+const PORT = process.env.PORT ||6060
 
 const moment =  require('moment')
 const authAdm = require("./middlewares/authAdm")
