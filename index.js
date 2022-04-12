@@ -69,6 +69,7 @@ app.get("/", async(req, res) => {
                     var usuario = await User.findByPk(barbers[index].userId)
                     barbers[index].foto = usuario.foto
                 }
+                res.render("index",{banners:banners,postagens:postagens,cortes:cortes,empresa:empresa,barbers:barbers})
             } else {
                 res.redirect("/admin/empresa")
             }
@@ -78,8 +79,6 @@ app.get("/", async(req, res) => {
     } catch (error) {
         console.log(error)
     }
-   
-   res.render("index",{banners:banners,postagens:postagens,cortes:cortes,empresa:empresa,barbers:barbers})
 })
 
 app.get("/agendamento", async(req, res) => {
