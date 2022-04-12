@@ -26,8 +26,8 @@ const Corte = connection.define('cortes',{
 
 })
 
-// Corte.sync({force: true }).then(()=>{
-//     console.log("Tabela Corte criada")
-// })
+Corte.sync({force: true }).then(()=>{
+    console.log("Tabela Corte criada")
+})
 
 module.exports = Corte

@@ -34,8 +34,8 @@ const User = connection.define('user',{
 
 })
 
-// User.sync({alter: true }).then(()=>{
-//     console.log("Tabela User criada")
-// })
+User.sync({alter: true }).then(()=>{
+    console.log("Tabela User criada")
+})
 
 module.exports = User

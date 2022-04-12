@@ -9,13 +9,13 @@ const DB_DIALECT = process.env.DB_DIALECT
 const connection = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD , {
     host: DB_HOST,
     dialect: DB_DIALECT,
-    //timezone: "-03:00",
+    timezone: "-03:00",
     logging: console.log,
-    // dialectOptions: {
-    //     ssl: {
-    //         require: true,
-    //         rejectUnauthorized: false
-    //     }
-    // }
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
 })
 module.exports = connection;
