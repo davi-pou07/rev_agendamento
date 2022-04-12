@@ -393,7 +393,11 @@ router.post("/reserva/cancelar",async(req,res)=>{
         if (userId != undefined) {
             var user = await User.findOne({where:{status:true,id:userId}})
             if (user != undefined) {
-                var reserva = await Reserva.findOne({where:{status:true,userId:user.id,id:reservaId}})
+                if (user.isAdmin == true) {
+                    var reserva = await Reserva.findOne({where:{status:true,id:reservaId}})
+                } else {
+                    var reserva = await Reserva.findOne({where:{status:true,userId:user.id,id:reservaId}})
+                }
                 if (reserva != undefined) {
                     Reserva.update({
                         status:false

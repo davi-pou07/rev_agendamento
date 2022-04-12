@@ -4,11 +4,11 @@
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Reservas</h1>
       </div>
-      <div class="container">
+      <div class="container-fluid">
         <div class="row mt-3">
             <div class="col-12">
                 <label for="barber" class="form-label">Barber</label>
-                <select class="form-select form-select-lg mb-3">
+                <select class="form-select form-select-lg mb-3" id="barber" onchange="redirect()">
                   <option value="0" <%=(barber != undefined)?'':'selected'%> >Selecione um dos funcionarios</option>
                   <%if(funcionarios.length > 0){%>
                       <%funcionarios.forEach(funcionario =>{%>
@@ -19,37 +19,98 @@
                   <%}%>
                 </select>
             </div>
-            <ul class="nav nav-pills flex-column flex-sm-row">
-              <li class="nav-item">
-                <a class="nav-link <%=(filtro == 0)?'active':''%>" href="?filtro=0&barberId">Pendentes</a>
+            <ul class="nav nav-pills flex-column flex-sm-row mb-5">
+              <li class="nav-item mx-2">
+                <input type="radio" onchange="redirect()" name="filtro" <%=(filtro == 0 || filtro == undefined)?'checked':''%> value="0" class="form-check-input" id="filtro0">
+                <label class="form-check-label" for="filtro0">Pendentes</label>
               </li>
-              <li class="nav-item">
-                <a class="nav-link <%=(filtro == 1)?'active':''%>" href="?filtro=1&barberId">Todos</a>
+              <li class="nav-item mx-2">
+                <input type="radio" onchange="redirect()" name="filtro" <%=(filtro == 1)?'checked':''%> value="1" class="form-check-input" id="filtro1">
+                <label class="form-check-label" for="filtro0">Todos</label>
               </li>
-              <li class="nav-item">
-                <a class="nav-link <%=(filtro == 2)?'active':''%>" href="?filtro=2&barberId">Finalizados</a>
+              <li class="nav-item mx-2">
+                <input type="radio" onchange="redirect()" name="filtro" <%=(filtro == 2)?'checked':''%> value="2" class="form-check-input" id="filtro2">
+                <label class="form-check-label" for="filtro0">Finalizados</label>
               </li>
-              <li class="nav-item">
-                <a class="nav-link <%=(filtro == 3)?'active':''%>" href="?filtro=3&barberId">Administrativos</a>
+              <li class="nav-item mx-2">
+                <input type="radio" onchange="redirect()" name="filtro" <%=(filtro == 3)?'checked':''%> value="3" class="form-check-input" id="filtro3">
+                <label class="form-check-label" for="filtro0">Administrativos</label>
               </li>
             </ul>
+          </div>
 
-            <%if(reservas != undefined){%>
-                <table id="table" class="table ty-5">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Usuario</th>
-                            <th>Data Reservada</th>
-                            <th>Status</th>
-                            <th>Data Solicitação</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                </table>
-            <%}%>
-        </div>
+          <%if(reservas != undefined){%>
+            <div class="table-responsive">
+              <table id="rtable" class="table ty-5">
+                  <thead>
+                      <tr class="text-center">
+                          <th>#</th>
+                          <th>Usuario</th>
+                          <th>Corte</th>
+                          <th>Data Reservada</th>
+                          <th>Status</th>
+                          <th>Data Solicitação</th>
+                          <th>Ação</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <%reservas.forEach(reserva =>{%>
+                      <tr class="text-center">
+                        <th><%=reserva.id%></th>
+                        <th><%=reserva.user%></th>
+                        <th><%=reserva.corte%></th>
+                        <th><%=reserva.data%> <%=reserva.hora%></th>
+                        <th class="bg-<%=(reserva.status == true)?"success":"danger"%> text-white"><%=(reserva.status == true)?"Pendente":"Finalizado"%></th>
+                        <th><%=reserva.dataCri%></th>
+                        
+                        <th><%-(reserva.status == true)?`<button onclick="cancelarReserva(${reserva.id})" class="btn btn-danger text-white">Cancelar</button>`:'-'%></th>
+                      </tr>
+                    <%})%>
+                  </tbody>
+              </table>
+            </div>
+          <%}%>
     </div>
     </main>
 <%-include ('../../partials/footerAdmin.ejs')%>
+<script>
+  function redirect() {
+    var barber = document.getElementById("barber").value
+    var filtro = document.querySelector('input[name="filtro"]:checked').value;
+    filtro = (filtro == undefined)?0:filtro
+    if (barber != 0) {
+      document.location = `/admin/reservas/?barberId=${barber}&filtro=${filtro}`
+    }
+  }
+
+  function cancelarReserva(reservaId) {
+  if (confirm("Deseja realmente cancelar essa reserva?")) {
+      if (reservaId != undefined) {
+          axios.post('/api/reserva/cancelar',{reservaId:reservaId}).then(resp =>{
+              if (resp.data.erro == undefined) {
+                  alert(resp.data.resp)
+                  document.location.reload()
+              } else {
+                  alert(resp.data.erro)
+                  document.location.reload()
+              }
+          })
+      }else{
+          document.location.reload()
+      }
+  }  
+}
+</script>
+
+<script>
+  $(document).ready( function () {
+    $('#rtable').DataTable({
+        "info": false,
+        "order": [[ 5, "desc" ],[ 4, "desc" ]]
+
+    });
+  });
+</script>
+
+
 <%-include ('../../partials/scripts.ejs')%>

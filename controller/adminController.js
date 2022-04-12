@@ -442,7 +442,7 @@ router.get("/cortes",authAdm,async(req,res)=>{
 router.get("/reservas",authAdm,async(req,res)=>{
     //filtro 0 = pendentes, 1 = todos, 2 = finalizados , 3 = administrativos
     var {barberId,filtro} =req.query
-
+ 
     var barber =  (barberId == undefined)?undefined:await Funcionario.findByPk(barberId)
 
     var adminIds = []
@@ -451,7 +451,8 @@ router.get("/reservas",authAdm,async(req,res)=>{
         adminIds.push(user.id)
     })
 
-    filtro = (filtro == undefined && barberId != undefined)?0:filtro
+    filtro = (filtro == undefined && barberId != undefined)?0:parseInt(filtro)
+    console.log(filtro)
     switch (filtro) {
         case 0:
             var reservas = await Reserva.findAll({where:{status:true,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
@@ -464,13 +465,26 @@ router.get("/reservas",authAdm,async(req,res)=>{
 
             break;
         case 3:
+            
             var reservas = await Reserva.findAll({where:{funcionarioId:barberId,userId:{[Op.in]:adminIds}}})
             break;
         default:
             var reservas =  undefined
             break;
     }
-
+    if(reservas != undefined){
+        for (let index = 0; index < reservas.length; index++) {
+            var reserva = reservas[index];
+            reserva.dataCri = moment(reserva.createdAt).format("DD/MM/YYYY HH:mm")
+    
+            var user = await User.findByPk(reserva.userId)
+            reserva.user = `${user.nome.split(' ')[0]} (${user.id})`
+    
+            var corte = await Corte.findByPk(reserva.corteId)
+            reserva.corte = corte.nome
+        }
+    }
+    
     var funcionarios = await Funcionario.findAll()
    
     res.render("admin/reservas/reservas",{barber:barber,reservas:reservas,funcionarios:funcionarios,filtro:filtro})
