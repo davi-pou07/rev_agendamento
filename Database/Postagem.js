@@ -22,8 +22,8 @@ const Postagem = connection.define('postagens',{
 
 })
 
-// Postagem.sync({force: true }).then(()=>{
-//     console.log("Tabela Postagem criada")
-// })
+Postagem.sync({force: false }).then(()=>{
+    console.log("Tabela Postagem criada")
+})
 
 module.exports = Postagem

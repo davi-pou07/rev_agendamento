@@ -29,8 +29,8 @@ const Reserva = connection.define('reservas',{
     }
 })
 
-// Reserva.sync({alter: true }).then(()=>{
-//     console.log("Tabela Reserva criada")
-// })
+Reserva.sync({force: false }).then(()=>{
+    console.log("Tabela Reserva criada")
+})
 
 module.exports = Reserva

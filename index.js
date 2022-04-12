@@ -57,14 +57,23 @@ app.use("/api",apiController)
 
 app.get("/", async(req, res) => {
     try {
-        var banners = await Banner.findAll({where:{status:true}})
-        var postagens = await Postagem.findAll({where:{status:true}})
-        var cortes = await Corte.findAll({where:{status:true},order: [['preco', 'asc']]})
-        var empresa = await Empresa.findOne() 
-        var barbers = await Funcionario.findAll({where:{status:true}})
-        for (let index = 0; index < barbers.length; index++) {
-            var usuario = await User.findByPk(barbers[index].userId)
-            barbers[index].foto = usuario.foto
+        var existUser = await User.findOne()
+        if (existUser != undefined) {
+            var empresa = await Empresa.findOne() 
+            if (empresa != undefined) {
+                var banners = await Banner.findAll({where:{status:true}})
+                var postagens = await Postagem.findAll({where:{status:true}})
+                var cortes = await Corte.findAll({where:{status:true},order: [['preco', 'asc']]})
+                var barbers = await Funcionario.findAll({where:{status:true}})
+                for (let index = 0; index < barbers.length; index++) {
+                    var usuario = await User.findByPk(barbers[index].userId)
+                    barbers[index].foto = usuario.foto
+                }
+            } else {
+                res.redirect("/admin/empresa")
+            }
+        } else {
+            res.redirect("/user/registrar")
         }
     } catch (error) {
         console.log(error)
