@@ -11,6 +11,10 @@ const Corte = require('../Database/Corte')
 const Empresa = require('../Database/Empresa')
 const Reserva = require('../Database/Reserva')
 
+const fs = require("fs")
+const ejs = require('ejs')
+const nodemailer = require("nodemailer")
+
 const auth = require("../middlewares/auth")
 const moment = require("moment")
 
@@ -19,6 +23,18 @@ const gerarHorarios = require("../functions/gerarHorarios")
 const gerarHorariosFuncionario = require("../functions/gerarHorariosFuncionario")
 const gerarReservas = require("../functions/gerarReservas")
 const verificaFuncionarioDisponivel = require("../functions/verificaFuncionarioDisponivel")
+
+
+var remetente = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.USER_MAIL ,
+        pass: process.env.PASS_MAIL
+    }
+});
+
 //================USUARIOS=====================
 
 router.get('/usuario/:userId',async(req,res)=>{
@@ -338,9 +354,35 @@ router.post("/horario/agendar",async(req,res)=>{
             funcionarioId:barber,
             status:true,
             userId:userId
-        }).then(()=>{
-            req.session.agendamento = 0
+        }).then(async reserva=>{
+
+            req.session.agendamento = undefined
             res.json({resp:'Deu certo garoto'})
+
+            var empresa = await Empresa.findOne()
+            var funcionario = await Funcionario.findByPk(barber)
+            var corte = await Corte.findByPk(corteId)
+
+            var date = moment().format("YYYYMMDD")
+            var html = await ejs.renderFile("public/html/confirmarReserva.ejs", { reserva: reserva, empresa: empresa, apelido:funcionario.apelido,cortenome:corte.nome })
+            var create = await fs.writeFileSync(`public/html/${date}.html`, html)
+            var htmlstream = await fs.createReadStream(`public/html/${date}.html`);
+
+            var envio = await remetente.sendMail({
+            to: usuario.email, // list of receivers
+            subject: "Reserva aberta com sucesso!! ✔", // Subject line
+            //text: `Olá, seu codigo para validação é ${codigo}`, // plain text body
+            html: htmlstream, // html body
+            }, function (error) {
+                if (error) {
+                    fs.unlinkSync(`public/html/${date}.html`)
+                    console.log(error);
+                } else {
+                    fs.unlinkSync(`public/html/${date}.html`)
+                    console.log("Email enviado com sucesso");
+                }
+            })
+    
         }).catch(err =>{
             res.json({erro:'Ocorreu um erro ao salvar'})
         })

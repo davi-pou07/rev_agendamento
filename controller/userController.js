@@ -25,8 +25,8 @@ var remetente = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: 'poudeyvis007@gmail.com',
-        pass: '99965511pou'
+        user: process.env.USER_MAIL ,
+        pass: process.env.PASS_MAIL
     }
 });
 
@@ -378,6 +378,7 @@ router.post("/user/esqueceu", async (req, res) => {
                     if (error) {
                         console.log(error);
                     } else {
+                        fs.unlinkSync(`public/html/${date}.html`)
                         console.log("Email enviado com sucesso");
                         req.flash('msm', 'Email enviado com sucesso')
                     }
