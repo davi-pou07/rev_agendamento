@@ -41,14 +41,14 @@
             <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
               <!-- Links -->
               <h6 class="text-uppercase fw-bold">Cortes</h6>
-              
+              <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
               <p>
-                <a href="/#agendamentos" class="text-white">Ver Todos</a>
+                <a href="/#agendamentos" class="text-white text-decoration-none">Ver Todos</a>
               </p>
               <%cortes.forEach((corte,index) =>{%>
                 <%if(index < 3){%>
                   <p>
-                    <a href="/#agendamentos" class="text-white" id="categoriaFooter0"><%=corte.nome%></a>
+                    <a href="/agendamentos/?corteId=<%=corte.id%>" class="text-white text-decoration-none" id="categoriaFooter0"><%=corte.nome%></a>
                   </p>
                 <%}%>
               <%})%>
@@ -59,15 +59,15 @@
             <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
               <!-- Links -->
               <h6 class="text-uppercase fw-bold">Links do Usuario</h6>
-              
+              <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
               <p>
-                <a href="/user/editar" class="text-white">Sua conta</a>
+                <a href="/user/editar" class="text-white text-decoration-none">Sua conta</a>
               </p>
               <p>
-                <a href="/user/login" class="text-white">Login</a>
+                <a href="/user/login" class="text-white text-decoration-none">Login</a>
               </p>
               <p>
-                <a href="/user/historico" class="text-white">Historico</a>
+                <a href="/user/historico" class="text-white text-decoration-none">Historico</a>
               </p>
             </div>
             <!-- Grid column -->
@@ -76,7 +76,7 @@
             <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
               <!-- Links -->
               <h6 class="text-uppercase fw-bold">Contatos</h6>
-              
+              <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
               <p id="enderecoFooter"><%=empresa.endereco%></p>
               <p id="emailFooter"><%=empresa.email%></p>
               <p id="celularFooter">+55 <%=empresa.whats%></p>
@@ -91,7 +91,7 @@
     <!-- Copyright -->
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
       © 2021 Copyright:
-      <a class="text-white" href="/">Site feito por Revon.com</a>
+      <a class="text-white" href="/">Criado por Revon.com</a>
     </div>
     <!-- Copyright -->
   </footer>
