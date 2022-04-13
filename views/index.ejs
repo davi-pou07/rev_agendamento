@@ -72,11 +72,11 @@
         
 
         <div class="card mt-3" id="horarios">
-          <div class="card-header">
+          <div class="card-header bg-dark text-white">
             <h1>Agendamento</h1>
-            <div class="form-floating mb-3">
+            <div class="my-3">
+              <label for="data" class="form-label text-white">Informe uma data</label>
               <input type="date" id="data" class="form-control form-control-lg">
-              <label for="data">Informe uma data</label>
             </div>
           </div>
           <div class="card-body">
@@ -118,7 +118,7 @@
             <%})%>
             </div>
           </div>
-          <div class="card-footer">
+          <div class="card-footer bg-dark text-white">
             <button id="btnAgendar" onclick="redirect()" class="btn btn-primary">Agendar</button>
           </div>
         </div>
