@@ -11,8 +11,12 @@
         <div class="carousel-inner">
           <%banners.forEach((banner,index) =>{%>
               <div class="carousel-item <%=(index == 0)?'active':''%>">
-                <img src="<%=banner.foto%>" class="bd-placeholder-img" width="100%"
-                  height="100%">
+                <picture>
+                    <source media="(max-width:600px)" srcset="<%=banner.fotoMobile%>">
+                    <source media="(min-width:600px)" srcset="<%=banner.foto%>">
+                    <img src="<%=banner.foto%>" class="bd-placeholder-img" width="100%"
+                    height="100%">
+                </picture>
               </div>
           <%})%>
         </div>

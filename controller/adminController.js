@@ -287,9 +287,20 @@ router.get("/banners/adicionar",authAdm,async(req,res)=>{
 })
 
 router.post("/banners/adicionar",authAdm,async(req,res)=>{
-    var {titulo,imagem,status,bannerId} = req.body
+    var {titulo,imagem,imagemMobile,status,bannerId} = req.body
     var erro = ''
-    if (titulo != undefined && titulo != '' && imagem != undefined && imagem != '' && status != undefined && status != '' ) {
+    if (titulo != undefined && titulo != '' && status != undefined && status != '' ) {
+
+        if (imagem == '' && imagemMobile == '') {
+            erro = `Informar ao menos um das duas imagens`
+            req.flash('erro',erro)
+            if (bannerId != "" && bannerId != undefined) {
+                return res.redirect("/admin/banners/adicionar?bannerId="+bannerId)
+            } else {
+                return res.redirect('/admin/banners/adicionar')
+            }
+        }
+
         if (bannerId != "" && bannerId != undefined) {
             try {
                 var banner = await Banner.findByPk(bannerId)
@@ -302,6 +313,7 @@ router.post("/banners/adicionar",authAdm,async(req,res)=>{
                 Banner.update({
                     titulo:titulo,
                     foto:imagem,
+                    fotoMobile:imagemMobile,
                     status:status
                 },{where:{
                     id:banner.id
@@ -310,7 +322,7 @@ router.post("/banners/adicionar",authAdm,async(req,res)=>{
                 }).catch(err =>{
                     erro = `Ocorreu um erro ao atualizar banner\n${err}`
                     req.flash('erro',erro)
-                    res.redirect("/admin/banners/adicionar")
+                    res.redirect("/admin/banners/adicionar?bannerId="+bannerId)
                 })
             } else {
                 req.flash('erro','Não foi possivel identificar banner informado')
@@ -320,6 +332,7 @@ router.post("/banners/adicionar",authAdm,async(req,res)=>{
             Banner.create({
                 titulo:titulo,
                 foto:imagem,
+                fotoMobile:imagemMobile,
                 status:status
             }).then(()=>{
                 res.redirect("/admin/banners")

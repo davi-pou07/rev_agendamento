@@ -9,7 +9,11 @@ const Banner = connection.define('banners',{
     },
     foto:{
         type:Sequelize.TEXT,
-        allowNull:false
+        allowNull:true
+    },
+    fotoMobile:{
+        type:Sequelize.TEXT,
+        allowNull:true
     },
     status:{
         type: Sequelize.BOOLEAN,

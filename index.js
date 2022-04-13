@@ -62,6 +62,7 @@ app.get("/", async(req, res) => {
             var empresa = await Empresa.findOne() 
             if (empresa != undefined) {
                 var banners = await Banner.findAll({where:{status:true}})
+                console.log(banners.fotoMobile)
                 var postagens = await Postagem.findAll({where:{status:true}})
                 var cortes = await Corte.findAll({where:{status:true},order: [['preco', 'asc']]})
                 var barbers = await Funcionario.findAll({where:{status:true}})

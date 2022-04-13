@@ -16,17 +16,35 @@
             <div class="container">
                 <form action="/admin/banners/adicionar" method="post" method="post" class="needs-validation" id="form" novalidate>
                     <input type="hidden" name="bannerId" value="<%=(banner != undefined)?banner.id:undefined%>">
+                    <h3>Banner para computadores / tablet</h3>
+                    <hr>
                     <div class="banner-image">
                         <label class="label">
-                            <input type="file" id="fileFoto" data-valor="<%=(banner != undefined)?banner.id:undefined%>" onchange="toBase64()" capture="user" <%=(banner != undefined)?'':'required'%> accept="image/*"/>
-                            <input type="hidden" name="imagem" id="fotoBase64" value="<%=(banner != undefined)?banner.foto:undefined%>">
+                            <input type="file" id="fileFoto1" onchange="toBase64B(1)" capture="user" accept="image/*"/>
+                            <input type="hidden" name="imagem" id="foto1Base64" value="<%=(banner != undefined)?banner.foto:undefined%>">
                             <figure class="banner-figure">
-                                <img src="<%=(banner != undefined)?banner.foto:'/img/cinza.svg'%>" class="d-block w-100 banner-avatar" width="1903px" height="512px" id="foto">
+                                <img src="<%=(banner != undefined)?banner.foto:'/img/cinza.svg'%>" class="d-block w-100 banner-avatar" width="1903px" height="512px" id="foto1">
                             </figure>
                         </label>
                         <p class="text-muted">OBS:Tamaho das imagens ideal é de 1903px / 512px
                         </p>
                     </div>
+
+                    <h3>Banner para Celulares</h3>
+                    <hr>
+                    <div class="banner-image">
+                        <label class="label">
+                            <input type="file" id="fileFoto2" onchange="toBase64B(2)" capture="user" accept="image/*"/>
+                            <input type="hidden" name="imagemMobile" id="foto2Base64" value="<%=(banner != undefined)?banner.fotoMobile:undefined%>">
+                            <figure class="banner-figure">
+                                <img src="<%=(banner != undefined)?banner.fotoMobile:'/img/cinza.svg'%>" class="d-block w-100 banner-avatar" width="330px" height="515px" id="foto2">
+                            </figure>
+                        </label>
+                        <p class="text-muted">OBS:Tamaho das imagens ideal é de 330px / 512px
+                        </p>
+                    </div>
+
+
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <label for="titulo" class="form-label">Insira o titulo desse banner</label>
@@ -39,16 +57,25 @@
                                 <option value="false"<%=(banner != undefined && banner.status == false)?'selected':''%>>Inativo</option>
                             </select>
                         </div>
-                        <div class="col-6 mt-5"><button type="submit" onclick="valid()" class="btn btn-success form-control">Salvar</button></div>
+                        <div class="col-6 mt-5"><button type="submit" class="btn btn-success form-control">Salvar</button></div>
                     </div>
                 </form>
             </div>
         </main>
         <%-include ('../../partials/footerAdmin.ejs')%>
         <script>
-            function valid() {
-                if (document.getElementById("fileFoto").dataset.valor == '') {
-                    alert("Click no campo cinza para adicioner uma imagem")
+            function toBase64B(valor) {
+                var filesSelected = document.getElementById(`fileFoto${valor}`).files;
+                if (filesSelected.length > 0) {
+                    var fileToLoad = filesSelected[0];
+                    var fileReader = new FileReader();
+                    fileReader.onload = function (fileLoadedEvent) {
+                        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+                        var base64 = document.getElementById(`foto${valor}Base64`).value = srcData
+                        alert(base64)
+                        var foto = document.getElementById(`foto${valor}`).src = srcData
+                    }
+                    fileReader.readAsDataURL(fileToLoad);
                 }
             }
         </script>
