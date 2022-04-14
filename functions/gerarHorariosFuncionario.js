@@ -1,11 +1,18 @@
 const moment = require('moment')
 const Funcionario = require("../Database/Funcionario")
 const Horario = require("../Database/Horario")
+const {Op} = require("sequelize")
 
 async function gerarHorariosFuncionario(funcionarioId,data) {
     var lista = []
     if (funcionarioId == 0) {
-        var horariosGeral = await Horario.findAll()
+        var funcionarios = await Funcionario.findAll({where:{status:true}})
+        var funcionariosIds = []
+        for (let index = 0; index < funcionarios.length; index++) {
+            const funcionario = funcionarios[index];
+            funcionariosIds.push(funcionario.id)
+        }
+        var horariosGeral = await Horario.findAll({where:{funcionarioId:{[Op.in]:funcionariosIds}}})
     }else{
         var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
         var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
