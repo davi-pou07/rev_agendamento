@@ -1,0 +1,150 @@
+<%-include ('../../partials/head.ejs')%>
+<%-include ('../../partials/navAdmin.ejs')%>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Avisos</h1>
+      </div>
+      <button onclick="editar()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar" type="button"><span data-feather="plus"></span>Adicionar</button>
+      <div class="table-responsive mt-5">
+        <table class="table" id="table">
+            <thead >
+                <tr class="mt-4">
+                    <th class="text-center">#</th>
+                    <th class="text-center">Titulo</th>
+                    <th class="text-center">Prazo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Data Criação</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%avisos.forEach(aviso =>{%>
+                    <tr>
+                        <td class="align-middle text-center"><%=aviso.id%></td>
+                        <td class="align-middle text-center"><%=aviso.titulo%></td>
+                        <td class="align-middle text-center text-nowrap"><%=aviso.prazo%></td>
+                        <td class="align-middle text-center"><%=(aviso.status == true)?'Ativo':'Inativo'%></td>
+                        <td class="align-middle text-center"><%=aviso.dataCri%></td>
+                        <td class="align-middle text-center"><button data-bs-toggle="modal" type="button" value="<%=aviso.id%>" onclick="editar(this.value)" data-bs-target="#modalAdicionar" class="btn btn-success">Editar</button></td>
+                    </tr>
+                <%})%>
+            </tbody>
+        </table>
+      </div>
+
+      <div class="modal fade" id="modalAdicionar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Aviso</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <input type="hidden" name="avisoId" id="avisoId">
+                  <div class="col-12">
+                    <label for="titulo" class="form-label">Titulo</label>
+                    <input type="text" class="form-control" name="titulo" id="titulo">
+                  </div>
+                  <div class="col-12 my-3">
+                    <label for="prazo" class="form-label">Prazo Expiração</label>
+                    <input type="date" class="form-control" id="prazo">
+                  </div>
+                  <div class="col-12 mb-3">
+                    <label for="mensagem" class="form-label">Mensagem</label>
+                    <textarea name="mensagem" id="mensagem" class="form-control"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="fecharModar" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" id="btnSalvar" onclick="salvar()" class="btn btn-primary">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+<%-include ('../../partials/footerAdmin.ejs')%>
+<script>
+    function editar(avisoId) {
+        var modalAdicionarLabel = document.getElementById("modalAdicionarLabel")
+        var titulo = document.getElementById("titulo")
+        var status = document.getElementById("status")
+        var prazo = document.getElementById("prazo")
+        var avisoIdIn = document.getElementById("avisoId")
+        var mensagem = document.getElementById("mensagem")
+
+        if (avisoId == undefined) {
+            modalAdicionarLabel.innerHTML = 'Adicionar Aviso'
+            titulo.value = ''
+            prazo.value = ''
+            avisoIdIn.value = ''
+            mensagem.value = ''
+        } else {
+            axios.get(`/api/aviso/${avisoId}`).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    var aviso = resp.data.aviso
+                    modalAdicionarLabel.innerHTML = aviso.titulo
+                    titulo.value = aviso.titulo
+                    status.value = aviso.status
+                    prazo.value = aviso.prazo
+                    avisoIdIn.value = aviso.id
+                    mensagem.value = aviso.mensagem
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        }
+        
+    }
+
+    function salvar() {
+        var avisoId = document.getElementById("avisoId").value
+        var titulo = document.getElementById("titulo").value
+        var status = document.getElementById("status").value
+        var prazo = document.getElementById("prazo").value
+        var mensagem = document.getElementById("mensagem").value
+
+
+        if (titulo == undefined || titulo == '' || mensagem == undefined || mensagem == '' || status == undefined || status == '' || prazo == undefined || prazo == '') {
+            return alert("Dados vazios, verifique com atenção e tente novamente")
+        }
+
+        if (avisoId != '' && avisoId != undefined) {
+            axios.post(`/api/aviso/editar`,{avisoId:avisoId,status:status,titulo:titulo,prazo:prazo,mensagem:mensagem}).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    alert(resp.data.resp)
+                    document.location.reload()
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        } else {
+            axios.post(`/api/aviso/adicionar`,{status:status,titulo:titulo,prazo:prazo,mensagem:mensagem}).then(resp =>{
+                if (resp.data.erro == undefined) {
+                    alert(resp.data.resp)
+                    document.location.reload()
+                } else {
+                    document.getElementById("fecharModar").click()
+                    alert(resp.data.erro)
+                }
+            }).catch(err =>{
+                alert(`ocorreu um erro \n${err}`)
+            })
+        }
+    }
+</script>
+<%-include ('../../partials/scripts.ejs')%>

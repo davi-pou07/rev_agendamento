@@ -23,6 +23,7 @@ const gerarHorarios = require("../functions/gerarHorarios")
 const gerarHorariosFuncionario = require("../functions/gerarHorariosFuncionario")
 const gerarReservas = require("../functions/gerarReservas")
 const verificaFuncionarioDisponivel = require("../functions/verificaFuncionarioDisponivel")
+const Aviso = require('../Database/Aviso')
 
 
 var remetente = nodemailer.createTransport({
@@ -566,10 +567,116 @@ router.post('/corte/editar',async(req,res)=>{
 //================FIM CORTE=====================
 
 
+//================AVISO=====================
+router.get('/aviso/:avisoId',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var avisoId = req.params.avisoId
+        try {
+            if (avisoId != undefined) {
+                var aviso = await Aviso.findByPk(avisoId)
+                if (aviso != undefined) {
+                    res.json({aviso:aviso})
+                } else {
+                    res.json({erro:"Aviso não identificado"})
+                }
+            } else {
+                res.json({erro:"Parametros invalidos"})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+
+router.post('/aviso/adicionar',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {titulo,prazo,status,mensagem} = req.body
+        try {
+            if (titulo != undefined && titulo != '' && mensagem != undefined && mensagem != '' && prazo != undefined && prazo != '' && status != undefined && status != '') {
+                Aviso.create({
+                    titulo:titulo,
+                    prazo:prazo,
+                    status:status,
+                    mensagem:mensagem
+                }).then(()=>{
+                    res.json({resp:'Aviso adicionado com sucesso'})
+                }).catch(err =>{
+                    console.log(err)
+                    res.json({erro:`Ocorreu um erro \n${err}`})
+                })
+            } else {
+                res.json({erro:'Parametros inválidos'})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+
+router.post('/aviso/editar',async(req,res)=>{
+    if (await usuarioAdmin(req.session.user) != undefined) {
+        var {avisoId,titulo,prazo,status,mensagem} = req.body
+        try {
+            if (titulo != undefined && titulo != '' && avisoId != undefined && avisoId != '' && mensagem != undefined && mensagem != '' && prazo != undefined && prazo != '' && status != undefined && status != '') {
+                var aviso = await Aviso.findByPk(avisoId)
+                if (aviso != undefined) {
+                    Aviso.update({
+                        titulo:titulo,
+                        prazo:prazo,
+                        status:status,
+                        mensagem:mensagem
+                    },{where:{id:avisoId}}).then(()=>{
+                        res.json({resp:'Aviso atualizado com sucesso'})
+                    }).catch(err =>{
+                        console.log(err)
+                        res.json({erro:`Ocorreu um erro \n${err}`})
+                    })
+                } else {
+                    res.json({erro:'Não foi possivel identificar o corte que deseja altera. Recarregue a pagina!'})
+                }
+            } else {
+                res.json({erro:'Parametros inválidos'})
+            }
+        } catch (error) {
+            console.log(error)
+            res.json({erro:`Ocorreu um erro \n${error}`})
+        }
+                
+    } else {
+        res.json({erro:`Nenhum Usuario logado, gentileza efetue o login e tente novamente`}) 
+    }
+})
+
+router.get("/avisos",async(req,res)=>{
+    try {
+        var avisos =  await Aviso.findAll({where:{status:true}})
+        for (let index = 0; index < avisos.length; index++) {
+            var aviso = avisos[index];
+            if (moment().isAfter(moment(aviso.prazo))) {
+                aviso.status = false
+                var  up = await Aviso.update({status:false},{where:{id:aviso.id}})
+            }
+        }
+        res.json({avisos:avisos})
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//================FIM AVISO=====================
+
+
 //================EMPRESA=====================
 
 router.get("/empresa",async(req,res)=>{
-    console.log("aqui")
     try {
     var empresa = await Empresa.findOne()
     res.json({empresa:empresa})
@@ -578,5 +685,6 @@ router.get("/empresa",async(req,res)=>{
     }
 })
 //================FIM EMPRESA=====================
+
 
 module.exports = router

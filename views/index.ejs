@@ -69,8 +69,6 @@
           <%})%>
         </div>
 
-        
-
         <div class="card mt-3" id="horarios">
           <div class="card-header bg-dark text-center text-md-start text-white">
             <h1 class="mt-2">Agendamento</h1>
@@ -124,10 +122,52 @@
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="modalAvisos" tabindex="-1" aria-labelledby="modalAvisosLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAvisosLabel">Avisos</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
     <%-include ("./partials/footer.ejs")%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
     <script>
+
+      window.addEventListener('load',()=>{
+        axios.get("/api/avisos").then(resp =>{
+          var avisos = resp.data.avisos
+          var modalBody = document.getElementById("modalBody")
+          if (avisos != undefined && avisos.length > 0) {
+            avisos.forEach(aviso =>{
+              if (aviso.status == true) {
+                var h6 = document.createElement("h6")
+                h6.innerHTML = aviso.titulo
+                var p = document.createElement("p")
+                p.innerHTML = aviso.mensagem
+                var hr = document.createElement("hr")
+
+                modalBody.insertBefore(h6,null)
+                modalBody.insertBefore(p,null)
+                modalBody.insertBefore(hr,null)
+              }
+            })
+            var modalAvisos = new bootstrap.Modal(document.getElementById('modalAvisos'))
+            modalAvisos.show()
+          }
+        })
+      })
+
       function redirect(){
         var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
         var barberId = document.querySelector('input[name="barber"]:checked').value;
@@ -142,4 +182,5 @@
         document.location =  `/agendamento/?data=${data}&barberId=${barberId}`
       }
     </script>
+    
       <%-include ("./partials/scripts.ejs")%>

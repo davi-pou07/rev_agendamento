@@ -18,6 +18,7 @@ const Banner = require('../Database/Banner')
 const Postagem = require('../Database/Postagem')
 const Corte = require('../Database/Corte')
 const Reserva = require('../Database/Reserva')
+const Aviso = require('../Database/Aviso')
 
 //=============== USUARIOS =======================
 
@@ -504,6 +505,21 @@ router.get("/reservas",authAdm,async(req,res)=>{
 })
 
 //=============FIM RESERVAS========================
+
+//=============FIM RESERVAS========================
+router.get("/avisos",authAdm,async(req,res)=>{
+    var erro = req.flash("erro")
+    erro =(erro == undefined || erro.length == 0)?undefined:erro
+    var avisos = await Aviso.findAll()
+    for (let index = 0; index < avisos.length; index++) {
+        var aviso = avisos[index];
+        aviso.prazo = moment(aviso.prazo).format("DD/MM/YYYY")
+        aviso.dataCri = moment(aviso.createdAt).format("DD/MM/YYYY HH:mm")
+    }
+    res.render("admin/avisos/avisos",{avisos:avisos,erro:erro})
+})
+//=============FIM RESERVAS========================
+
 
 
 module.exports = router
