@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-sm-6 col-md-4">
                         <div class="input-group">
-                        <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
+                        <input class="me-2" type="radio" onclick="listarHorarios()" name="barber" <%=(barberId == undefined || barberId == 0)?'checked':''%> value="0" id="examplradio1">
                         <div class="personal-image">
                             <label class="label">
                                 <figure class="personal-figure">
@@ -38,7 +38,7 @@
                     <%barbers.forEach(barber =>{%>
                         <div class="col-sm-6 col-md-4">
                             <div class="input-group">
-                                <input class="me-2" type="radio" onclick="listarHoratios()" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
+                                <input class="me-2" type="radio" onclick="listarHorarios()" name="barber" <%=(barberId != undefined && barberId == barber.id)?'checked':''%> value="<%=barber.id%>" id="examplradio1">
                                 <div class="personal-image">
                                     <label class="label">
                                         <figure class="personal-figure">
@@ -68,51 +68,43 @@
                 </select>
             </div>
         </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-end mt-5">
-              <li class="page-item disabled" id="btnAnterior">
-                <button class="page-link" onclick="alteraSemana('s')"><span data-feather="arrow-left"></span> Anterior</button>
-              </li>
-              <input type="hidden" name="add" id="add" value="<%=add%>">
-              <li class="page-item" id="btnProximo">
-                <button class="page-link" onclick="alteraSemana('a')">Proximo <span data-feather="arrow-right"></span></button>
-              </li>
-            </ul>
-        </nav>
+        
         <input type="hidden" name="data" id="dataSelecionada" value="<%=data%>">
-        <div class="table-responsive">
-        <table class="table table-borderless table-hover mt-3" id="tableAgend">
-            <thead>
-                <tr id="tableDias">
-                     <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tableHorarios">
-                
-            </tbody>
-        </table>
+        <h3>Escolha uma data para realizar seu corte</h3>
+        <div class="btn-toolbar justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group my-5">
+                <button class="btn btn-dark" id="btnAnterior" onclick="alteraSequencia('s')"><span data-feather="arrow-left"></span></button>
+                    <div class="btn-group" role="group" id="btnsGrup" aria-label="Basic radio toggle button group">
+                    
+                    </div>
+                <button class="btn btn-dark" id="btnProximo" onclick="alteraSequencia('a')"><span data-feather="arrow-right"></span></button>
+            </div>
         </div>
+        <div id="rowHoras" class="row justify-content-center text-center">
+            
+        </div>
+        
     </div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 <script>
 
-    function alteraSemana(operator) {
-        var add = document.getElementById("add")
-        if (operator == 's') {
-            add.value = parseInt(add.value) - 1
+    function alteraSequencia(operador) {
+        var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+        var dataSelecionada = document.getElementById("dataSelecionada")
+        var data = moment(dataSelecionada.value.split(' ')[1],'DD/MM')
+        if (operador == 's') {
+            data = data.subtract(3,'days')
+            dataSelecionada.value = (data.isSameOrBefore(moment()))?`${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`
+            :
+            `${dias[parseInt(data.isoWeekday())-1]} ${data.format('DD/MM')}`
         }else{
-            add.value = parseInt(add.value) + 1
+            data = data.add(3,'days')
+            dataSelecionada.value = (data.isSameOrBefore(moment()) || data.isAfter(moment().add(20,'day')))?`${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`
+            :
+            `${dias[parseInt(data.isoWeekday())-1]} ${data.format('DD/MM')}`
         }
-
-        listarHoratios()
+        listarHorarios()
     }
 
     function agendar(data) {
@@ -144,86 +136,73 @@
         }
     }  
 
+    function alteraData(data) {
+        var dataSelecionada = document.getElementById("dataSelecionada").value = data
+        listarHorarios()
+    }
 
-    window.addEventListener('load',listarHoratios())
+    window.addEventListener('load',listarHorarios())
 
-    function listarHoratios() {
+    function listarHorarios() {
         var funcionarioId = document.querySelector('input[name="barber"]:checked').value;
-        var tableDias = document.getElementById("tableDias")
-        var tableHorarios = document.getElementById("tableHorarios")
         var dataSelecionada = document.getElementById("dataSelecionada")
-        var add = document.getElementById("add")
         var btnAnterior = document.getElementById("btnAnterior")
         var btnProximo = document.getElementById("btnProximo")
-
-        if (add.value > 0) {
-            btnAnterior.classList.remove('disabled')
-            if (add.value > 3) {
-                btnProximo.classList.add('disabled')
-            } else {
-                btnProximo.classList.remove('disabled')
-            }
-        } else {
-            btnAnterior.classList.add('disabled')
-            btnProximo.classList.remove("disabled")
-        }
+        var btnsGrup = document.getElementById("btnsGrup")
+        var rowHoras = document.getElementById("rowHoras")
+        var horariosSelect = []
 
 
-        axios.get(`/api/horarios/listar?add=${add.value}&funcionarioId=${funcionarioId}`).then(resp =>{
+        axios.get(`/api/horarios/listar?funcionarioId=${funcionarioId}&dataSelecionada=${dataSelecionada.value}`).then(resp =>{
             var datas = resp.data.datas
-            var horarios = resp.data.horarios
             var horariosFunc = resp.data.horariosFunc
             var horariosReservados = resp.data.horariosReservados
             //AQUIII ESQUECXENÃO AGORA É O FOREACH HORARIOS
-            console.log(horariosFunc)
-            console.log(horariosReservados)
-            var rowsDatas = `<th>Horas</th>`
-            var rowsHoras = ``
+
+            var inputsBtn = ``
             datas.forEach(data => {
-                rowsDatas += `<th id="${data}" class="text-center ${(data == dataSelecionada.value)?'bg-success text-white':''}">${data}</th>`
+                inputsBtn += `<input type="radio" class="btn-check" name="btnradio" onchange="alteraData(this.id)" id="${data}" autocomplete="off"  ${(data == dataSelecionada.value)?'checked':''}>
+            <label class="btn btn-outline-primary" for="${data}">${data}</label>
+          `
             });
-            tableDias.innerHTML =  rowsDatas
-            horarios.forEach(hora =>{
-                rowsHoras += `<tr id='${hora}'><td class="bg-dark text-white">${hora}</td></tr>`
-            })
-            tableHorarios.innerHTML = rowsHoras
-
-           var trList = document.querySelectorAll('#tableHorarios tr');
-                trList.forEach(tr => {
-                    for(index = 0;index< 7 ;index++){
-                        var dia = index+1
-                       
-                        var td = document.createElement("td")
-                        td.classList.add('text-center')
-                        var exist = horariosFunc.find( hf => 
-                        dia >= hf.range.split("-")[0] &&
-                        dia <= hf.range.split('-')[1] && 
-                        hf.horas.find(hfh =>
-                            hfh == tr.id
-                        ) != undefined)   
-                        if(exist != undefined){
-                            if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
-                                td.innerHTML = `-` 
-                            } else {
-                                var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia && hr.add == add.value)
-                                if (reservado == undefined) {
-                                    td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
-                                } else {
-                                    td.innerHTML = `-` 
-                                }
-                            }
-                        }else{
-                            td.innerHTML = `-` 
-                        }
-
-                        tr.insertBefore(td,null)
-                        
+            btnsGrup.innerHTML = inputsBtn
+            
+            var innerHoras = ``
+            horariosFunc.forEach(horario =>{
+                horario.horas.forEach(hora =>{
+                    var reservado = horariosReservados.find(hr=> hr.hora == hora)
+                    if (reservado == undefined) {
+                        innerHoras += `<div class="col-3">
+                <button class="btn btn-outline-success my-1" value="${hora}">${hora}</button>
+            </div>` 
                     }
-                    
-                });
-
-               
-
+                })
+            })
+            rowHoras.innerHTML = innerHoras
+                // var td = document.createElement("td")
+                // td.classList.add('text-center')
+                // var exist = horariosFunc.find( hf => 
+                // dia >= hf.range.split("-")[0] &&
+                // dia <= hf.range.split('-')[1] && 
+                // hf.horas.find(hfh =>
+                //     hfh == tr.id
+                // ) != undefined)   
+                // if(exist != undefined){
+                //     if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
+                //         td.innerHTML = `-` 
+                //     } else {
+                //         var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia && hr.add == add.value)
+                //         if (reservado == undefined) {
+                //             td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
+                //         } else {
+                //             td.innerHTML = `-` 
+                //         }
+                //     }
+                // }else{
+                //     td.innerHTML = `-` 
+                
+                // tr.insertBefore(td,null)
+                // }    
 
         }).catch(err =>{
             console.log("err")

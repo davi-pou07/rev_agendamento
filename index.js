@@ -88,30 +88,15 @@ app.get("/agendamento", async(req, res) => {
     var {barberId,data,corteId} = req.query
     var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
     data = (data == undefined || data == 0)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:data
+    var dataFilt = moment(data.split(' ')[1],'DD/MM')
+    dataFilt.set('hour', 00);
+    dataFilt.set('minute', 00);
+    dataFilt.set('second', 00);
 
-    var dataFilt = moment(data.split(' ')[1],'DD/MM').isoWeekday(1)
-    var before = moment().add(3,'week')
-    if (before.isBefore(dataFilt)) {
-        data = `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`
-    }
-    var f = true
-    var add = 0
-    while (f) {
-        var inicioSemana = moment().isoWeekday(1)
-        var filtro = inicioSemana.add(add,'w')
-        if (dataFilt.isBefore(filtro) == false && add < 4) {
-            console.log("mais um???")
-            if (filtro.format('DD/MM/YYYY') == dataFilt.format('DD/MM/YYYY')) {
-                f = false
-            }else{
-                add = add + 1
-            }
-        } else {
-            console.log("mais um")
-            f = false
-        }
-    }
-
+    var hoje = moment()
+    hoje.set('hour', 00);
+    hoje.set('minute', 00);
+    hoje.set('second', 00);
 
     var existFunc = await Funcionario.findByPk(barberId)
     barberId = (existFunc == undefined)?0:existFunc.id
@@ -124,7 +109,9 @@ app.get("/agendamento", async(req, res) => {
         var usuario = await User.findByPk(barbers[index].userId)
         barbers[index].foto = usuario.foto
     }
-    res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data,add:add})
+
+    res.render("agendamento",{barbers:barbers,barberId:barberId,cortes:cortes,corteId:corteId,data:data})
+    
  })
 
  app.get("/sucesso",auth,(req,res)=>{

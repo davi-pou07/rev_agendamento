@@ -249,31 +249,40 @@ router.post("/horario/remover",async(req,res)=>{
 })
 
 router.get("/horarios/listar",async(req,res)=>{
-    var add = req.query.add
+    var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
+    var dataSelecionada = req.query.dataSelecionada
+    dataSelecionada = (dataSelecionada == undefined || dataSelecionada == 0)? `${dias[parseInt(moment().isoWeekday())-1]} ${moment().format('DD/MM')}`:dataSelecionada
+    
     var funcionarioId = req.query.funcionarioId
     funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
-    add = (add == undefined || add == 0)?0:add
-    var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
-    var inicioSemana = moment().isoWeekday(1)
-    var filtro = inicioSemana.add(add,'week')
-    //console.log(filtro)
+
+    var filtro = moment(dataSelecionada.split(' ')[1],'DD/MM')
+    
+
+    filtro.set('hour', 00);
+    filtro.set('minute', 00);
+    filtro.set('second', 00);
+
+    var hoje = moment()
+    hoje.set('hour', 00);
+    hoje.set('minute', 00);
+    hoje.set('second', 00);
+   
+    filtro = ((filtro.isBefore(hoje)) || (filtro.diff(hoje,'day') > 20))?hoje:filtro
+ 
+    var iso = filtro.isoWeekday()
     
     var horariosFunc = await gerarHorariosFuncionario(funcionarioId,filtro)
-    //console.log("horariosFunc")
-    //console.log(horariosFunc)
-    
-    var empresa = await Empresa.findOne()
-    var horarios = await gerarHorarios(empresa.as)
+
     var horariosReservados = await gerarReservas(funcionarioId,filtro)
-    //console.log("horariosReservados?????????????????")
-    //console.log(horariosReservados)
-    var datas = []
-    var x = 0
-    while(x < 7){
-        datas.push(`${dias[x]} ${filtro.isoWeekday(x+1).format('DD/MM')}`)
-        x++
+    
+    var datas = [`${dias[parseInt(filtro.isoWeekday())-1]} ${filtro.format('DD/MM')}`]
+    var x = 1
+    while(datas.length < 3){
+        filtro.add(x,'d')
+        datas.push(`${dias[parseInt(filtro.isoWeekday())-1]} ${filtro.format('DD/MM')}`)
     }
-    res.json({datas:datas,horarios:horarios,horariosFunc:horariosFunc,horariosReservados:horariosReservados})
+    res.json({datas:datas,horariosFunc:horariosFunc,horariosReservados:horariosReservados})
 })
 
 router.post("/horario/agendar",async(req,res)=>{

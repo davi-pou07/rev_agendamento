@@ -4,6 +4,7 @@ const Horario = require("../Database/Horario")
 const {Op} = require("sequelize")
 
 async function gerarHorariosFuncionario(funcionarioId,data) {
+    var iso = data.isoWeekday()
     var lista = []
     if (funcionarioId == 0) {
         var funcionarios = await Funcionario.findAll({where:{status:true}})
@@ -12,10 +13,22 @@ async function gerarHorariosFuncionario(funcionarioId,data) {
             const funcionario = funcionarios[index];
             funcionariosIds.push(funcionario.id)
         }
-        var horariosGeral = await Horario.findAll({where:{funcionarioId:{[Op.in]:funcionariosIds}}})
+        var horariosGeral = await Horario.findAll({
+            where:{
+                funcionarioId:{[Op.in]:funcionariosIds}, 
+                de:{[Op.lte]:iso},
+                ate:{[Op.gte]:iso}
+            }
+        })
     }else{
         var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-        var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
+        var horariosGeral = await Horario.findAll({where:
+            {
+                funcionarioId:funcionario.id,
+                de:{[Op.lte]:iso},
+                ate:{[Op.gte]:iso}
+            }
+        })
     }
     horariosGeral.forEach(hora =>{
         var horas = []
@@ -31,10 +44,12 @@ async function gerarHorariosFuncionario(funcionarioId,data) {
                 x=false
             }
         }
-        hora.de = (hora.de < moment().isoWeekday() && data.isBefore(moment()))?moment().isoWeekday():hora.de
-        lista.push({range:`${hora.de}-${hora.ate}`,funcionarioId:hora.funcionarioId,horas:horas})
+        //hora.de = (hora.de < moment().isoWeekday() && data.isBefore(moment()))?moment().isoWeekday():hora.de
+        lista.push({funcionarioId:hora.funcionarioId,horas:horas})
         
     })
+    console.log(lista)
     return lista
+    
 }
 module.exports = gerarHorariosFuncionario

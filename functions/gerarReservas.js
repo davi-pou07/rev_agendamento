@@ -3,45 +3,48 @@ const Funcionario = require("../Database/Funcionario")
 const Horario = require("../Database/Horario")
 const Reserva = require("../Database/Reserva")
 const Corte = require("../Database/Corte")
+const {Op} = require("sequelize")
+
 
 async function gerarReservas(funcionarioId,data) {
     var lista = []
     var reservados = []
-
+    var iso = data.isoWeekday()
+    var dataForm = moment(data).format('DD/MM/YYYY')
     if (funcionarioId == 0) {
-        var horariosGeral = await Horario.findAll()
-        var reservas = await Reserva.findAll({where:{status:true}})
+        var funcionarios = await Funcionario.findAll({where:{status:true}})
+        var funcionariosIds = []
+        for (let index = 0; index < funcionarios.length; index++) {
+            const funcionario = funcionarios[index];
+            funcionariosIds.push(funcionario.id)
+        }
+        var horariosGeral = await Horario.findAll({
+            where:{
+                funcionarioId:{[Op.in]:funcionariosIds}, 
+                de:{[Op.lte]:iso},
+                ate:{[Op.gte]:iso}
+            }
+        })
+        var reservas = await Reserva.findAll({where:{status:true,data:dataForm}})
     }else{
         var funcionario = await Funcionario.findOne({where:{id:funcionarioId,status:true}})
-        var horariosGeral = await Horario.findAll({where:{funcionarioId:funcionario.id}})
-        var reservas = await Reserva.findAll({where:{status:true,funcionarioId:funcionario.id}})
+        var horariosGeral = await Horario.findAll({where:
+            {
+                funcionarioId:funcionario.id,
+                de:{[Op.lte]:iso},
+                ate:{[Op.gte]:iso}
+            }
+        })
+        var reservas = await Reserva.findAll({where:{status:true,funcionarioId:funcionario.id,data:dataForm}})
     }
 
     for (let index = 0; index < reservas.length; index++) {
         const reserva = reservas[index];
         var corte = await Corte.findByPk(reserva.corteId)
-        var data = moment(reserva.data,'DD/MM/YYYY').format('YYYY-MM-DD')
+        var date = moment(reserva.data,'DD/MM/YYYY').format('YYYY-MM-DD')
 
-        if (moment(data).isSameOrAfter(moment().format("YYYY-MM-DD"))) {
-            var f = true
-            var add = 0
-            while (f) {
-                var inicioSemana = moment().isoWeekday(1)
-                var filtro = inicioSemana.add(add,'week')
-                var dataReserva = moment(reserva.data,'DD/MM/YYYY').isoWeekday(1)
-                if (dataReserva.isBefore(filtro) == false) {
-                    if (filtro.format('DD/MM/YYYY') == dataReserva.format('DD/MM/YYYY')) {
-                        f = false
-                    }else{
-                        add = add + 1
-                    }
-                } else {
-                    f = false
-                }
-            }
-
+        if (moment(date).isSameOrAfter(moment().format("YYYY-MM-DD"))) {
             reservados.push({
-                add:add,
                 hora:reserva.hora,
                 dia: moment(reserva.data,'DD/MM/YYYY').isoWeekday(),
                 tempo:corte.tempo,
@@ -52,7 +55,6 @@ async function gerarReservas(funcionarioId,data) {
             var horas = moment(corte.tempo,'HH:mm').subtract(30,'minutes').hour()
             //hora a mais
             reservados.push({
-            add:add,
             hora:moment(reserva.hora,'HH:mm').add({'hours':horas,'minute':minutos}).format('HH:mm'),
             dia: moment(reserva.data,'DD/MM/YYYY').isoWeekday(),
             tempo:corte.tempo,
@@ -83,7 +85,6 @@ async function gerarReservas(funcionarioId,data) {
         if (remover.find(r=> r == reserva) == undefined) {
             if (lista.find(l => l.hora == reserva.hora && l.dia == reserva.dia) == undefined) {
                 lista.push({
-                    add:reserva.add,
                     hora:reserva.hora,
                     dia:reserva.dia,
                     tempo:reserva.tempo
