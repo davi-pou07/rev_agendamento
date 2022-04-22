@@ -36,14 +36,19 @@ async function gerarHorariosFuncionario(funcionarioId,data) {
         var ultima = moment(hora.as.split("-")[1],'h:m')
         var indHora = primeira
         var x = true
-        horas.push(primeira.format('HH:mm'))
-        while (x) {
-            if (indHora.add(30,'minutes').isSameOrBefore(ultima)) {
-                horas.push(indHora.format('HH:mm'))
+        var minute = 0
+        do{
+            if (indHora.add(minute,'minutes').isSameOrBefore(ultima)) {
+                if (data.isAfter(moment(),'day')) {
+                    horas.push(indHora.format('HH:mm'))
+                }else if (indHora.isAfter(moment(),'hour')  ) {
+                    horas.push(indHora.format('HH:mm'))
+                }
             } else {
                 x=false
             }
-        }
+            minute = 30
+        }while(x)
         //hora.de = (hora.de < moment().isoWeekday() && data.isBefore(moment()))?moment().isoWeekday():hora.de
         lista.push({funcionarioId:hora.funcionarioId,horas:horas})
         

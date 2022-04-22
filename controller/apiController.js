@@ -288,31 +288,25 @@ router.get("/horarios/listar",async(req,res)=>{
 router.post("/horario/agendar",async(req,res)=>{
     //ERROS = 1-RELOAD; 2-LOGIN; 3-SOMENTE MOSTRAR
     var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
-    var {data,funcionarioId,corteId,add} = req.body
+    var {data,funcionarioId,corteId,hora} = req.body
+    var dataSelecionada = moment(data.split(' ')[1],'DD/MM')
+
     var userId = req.session.user
-    //Separa dia e hora
-    var dia = data.split(' ')[0]
-    var hora = data.split(" ")[1]
+    funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
 
     //Valida dados vazios
-    if (data == undefined || data == '' ||  corteId == undefined || corteId == 0) {
+    if (data == undefined || data == '' ||  corteId == undefined || corteId == 0 || hora == undefined || hora == '') {
         return res.json({erroId:1,erro:"Dados inválidos, gentileza tente novamente!"})
     }
 
-    //Valida Id funcionario e a semana selecionada
-    funcionarioId = (funcionarioId == undefined || funcionarioId == 0)?0:funcionarioId
-    add = (add == undefined || add <= 0)?0:add
+    dataSelecionada.set('hour',hora.split(':')[0])
+    dataSelecionada.set('minute',hora.split(':')[1])
 
-    //Verifica se a data é anterior a atual
-    var inicioSemana = moment().isoWeekday(1)
-    var inicioSemanaSelecionada = inicioSemana.add(add,'week')
-    var dataSelecionada = moment(inicioSemanaSelecionada).isoWeekday(parseInt(dia))
-
-    if (dataSelecionada.isBefore(moment().format('YYYY-MM-DD'))) {
+    if (dataSelecionada.isBefore(moment())) {
         return res.json({erroId:1,erro:'Data selecionada é anterior da data atual'})
-    }else if (add == 0 && moment().isoWeekday() == dia && moment(hora,'HH:mm').isBefore(moment())){
-        return res.json({erroId:1,erro:'Horario selecionado é anterior ao horario atual'})
     }
+
+    var dia = dataSelecionada.isoWeekday()
 
     //Verifica um funcionario disponivel no horario solicitado
     if (funcionarioId == 0) {
@@ -327,6 +321,7 @@ router.post("/horario/agendar",async(req,res)=>{
     } else {
         var funcionarioDisponivel = await verificaFuncionarioDisponivel(horariosGeral,hora)
     }
+
     var barber = ''
     for (let i = 0; i < funcionarioDisponivel.length; i++) {
         const funcId = funcionarioDisponivel[i];
@@ -339,7 +334,7 @@ router.post("/horario/agendar",async(req,res)=>{
     if (barber != '') {
         if (userId == undefined) {
             data = `${dias[parseInt(data.split(' ')[0])-1]} ${dataSelecionada.format('DD/MM')}`
-            req.session.agendamento = {data:data,funcionarioId:barber,corteId:corteId,add:add}
+            req.session.agendamento = {data:data,funcionarioId:barber,corteId:corteId}
             return res.json({erroId:2,erro:'Você será redirecionado para realizar seu login'})
         }else{
             var usuario = await User.findByPk(userId)

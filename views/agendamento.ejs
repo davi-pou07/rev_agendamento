@@ -70,9 +70,9 @@
         </div>
         
         <input type="hidden" name="data" id="dataSelecionada" value="<%=data%>">
-        <h3>Escolha uma data para realizar seu corte</h3>
-        <div class="btn-toolbar justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group my-5">
+        <h3 class="mt-5">Escolha uma data para realizar seu corte</h3>
+        <div class="btn-toolbar justify-content-center mb-5 mt-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group">
                 <button class="btn btn-dark" id="btnAnterior" onclick="alteraSequencia('s')"><span data-feather="arrow-left"></span></button>
                     <div class="btn-group" role="group" id="btnsGrup" aria-label="Basic radio toggle button group">
                     
@@ -107,11 +107,11 @@
         listarHorarios()
     }
 
-    function agendar(data) {
-        var add = document.getElementById("add").value
+    function agendar(hora) {
         var funcionarioId = document.querySelector('input[name="barber"]:checked').value;
         var corte = document.getElementById("corte")
-
+        var data = document.getElementById("dataSelecionada").value
+        
         if (corte.value == 0) {
             corte.classList.add("is-invalid")
             corte.classList.remove("is-valid")
@@ -120,7 +120,7 @@
             corte.classList.add("is-valid")
             corte.classList.remove("is-invalid")
 
-            axios.post("/api/horario/agendar",{add:add,funcionarioId:funcionarioId,corteId:corte.value,data:data}).then(resp =>{
+            axios.post("/api/horario/agendar",{data:data,funcionarioId:funcionarioId,corteId:corte.value,hora:hora}).then(resp =>{
                 if (resp.data.erro == undefined) {
                     document.location.href = '/sucesso'
                 } else {
@@ -152,7 +152,7 @@
         var rowHoras = document.getElementById("rowHoras")
         var horariosSelect = []
 
-
+        rowHoras.innerHtml = `<div class="col-12"><div class="spinner-border text-primary" role="status"></div></div>`
         axios.get(`/api/horarios/listar?funcionarioId=${funcionarioId}&dataSelecionada=${dataSelecionada.value}`).then(resp =>{
             var datas = resp.data.datas
             var horariosFunc = resp.data.horariosFunc
@@ -173,37 +173,12 @@
                     var reservado = horariosReservados.find(hr=> hr.hora == hora)
                     if (reservado == undefined) {
                         innerHoras += `<div class="col-3">
-                <button class="btn btn-outline-success my-1" value="${hora}">${hora}</button>
+                <button class="btn btn-outline-success my-1"  onclick='agendar(this.value)' value="${hora}">${hora}</button>
             </div>` 
                     }
                 })
             })
             rowHoras.innerHTML = innerHoras
-                // var td = document.createElement("td")
-                // td.classList.add('text-center')
-                // var exist = horariosFunc.find( hf => 
-                // dia >= hf.range.split("-")[0] &&
-                // dia <= hf.range.split('-')[1] && 
-                // hf.horas.find(hfh =>
-                //     hfh == tr.id
-                // ) != undefined)   
-                // if(exist != undefined){
-                //     if (add.value == 0 && moment().isoWeekday() == dia && moment(tr.id,'HH:mm').isBefore(moment())) {
-                //         td.innerHTML = `-` 
-                //     } else {
-                //         var reservado = horariosReservados.find(hr => hr.hora == tr.id && hr.dia == dia && hr.add == add.value)
-                //         if (reservado == undefined) {
-                //             td.innerHTML = `<button class="btn btn-outline-success" value ='${dia} ${tr.id}' onclick='agendar(this.value)'>Agendar</button>`
-                //         } else {
-                //             td.innerHTML = `-` 
-                //         }
-                //     }
-                // }else{
-                //     td.innerHTML = `-` 
-                
-                // tr.insertBefore(td,null)
-                // }    
-
         }).catch(err =>{
             console.log("err")
             console.log(err)
