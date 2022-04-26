@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
-const Sequelize = require('sequelize')
-const { Op } = require('sequelize')
+const sequelize = require('../Database/database')
 
+const { Op , QueryTypes} = require('sequelize')
 const User = require("../Database/User")
 const Funcionario = require("../Database/Funcionario")
 const Horario = require('../Database/Horario')
@@ -455,37 +455,44 @@ router.get("/cortes",authAdm,async(req,res)=>{
 
 router.get("/reservas",authAdm,async(req,res)=>{
     //filtro 0 = pendentes, 1 = todos, 2 = finalizados , 3 = administrativos
-    var {barberId,filtro} =req.query
- 
+    var {barberId,filtro,hoje} =req.query
+    hoje = (hoje == 'true')? true:false
     var barber =  (barberId == undefined)?undefined:await Funcionario.findByPk(barberId)
 
-    var adminIds = []
+    var adminIds = `(0`
     var users = await User.findAll({where:{isAdmin:true}})
     users.forEach(user =>{
-        adminIds.push(user.id)
+        adminIds += `,${user.id}`
+        //adminIds.push(user.id)
     })
+    adminIds += ')'
+
+    var dataAtual = moment().format("DD/MM/YYYY")
+    var whereData = (hoje == true)?`AND data = '${dataAtual}'`:``
 
     filtro = (filtro == undefined && barberId != undefined)?0:parseInt(filtro)
-    console.log(filtro)
     switch (filtro) {
         case 0:
-            var reservas = await Reserva.findAll({where:{status:true,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
+            var reservas = await sequelize.query(`select * from reservas where status = true and "funcionarioId" = ${barberId} AND "userId" not in ${adminIds} ${whereData}`,{ type: QueryTypes.SELECT })
+            //var reservas = await Reserva.findAll({where:{status:true,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
             break;
         case 1:
-            var reservas = await Reserva.findAll({where:{funcionarioId:barberId}})
+            var reservas = await  sequelize.query(`select * from reservas where "funcionarioId" = ${barberId} ${whereData}`,{ type: QueryTypes.SELECT })
+            //var reservas = await Reserva.findAll({where:{funcionarioId:barberId}})
             break;
         case 2:
-            var reservas = await Reserva.findAll({where:{status:false,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
-
+            var reservas = await  sequelize.query(`select * from reservas where status = false AND "funcionarioId" = ${barberId} AND "userId" not in ${adminIds} ${whereData}`,{ type: QueryTypes.SELECT })
+            //var reservas = await Reserva.findAll({where:{status:false,funcionarioId:barberId,userId:{[Op.notIn]:adminIds}}})
             break;
         case 3:
-            
-            var reservas = await Reserva.findAll({where:{funcionarioId:barberId,userId:{[Op.in]:adminIds}}})
+            var reservas = await  sequelize.query(`select * from reservas where "funcionarioId" = ${barberId} AND "userId" in ${adminIds} ${whereData}`,{ type: QueryTypes.SELECT })
+            //var reservas = await Reserva.findAll({where:{funcionarioId:barberId,userId:{[Op.in]:adminIds}}})
             break;
         default:
             var reservas =  undefined
             break;
     }
+
     if(reservas != undefined){
         for (let index = 0; index < reservas.length; index++) {
             var reserva = reservas[index];
@@ -501,7 +508,7 @@ router.get("/reservas",authAdm,async(req,res)=>{
     
     var funcionarios = await Funcionario.findAll()
    
-    res.render("admin/reservas/reservas",{barber:barber,reservas:reservas,funcionarios:funcionarios,filtro:filtro})
+    res.render("admin/reservas/reservas",{barber:barber,reservas:reservas,funcionarios:funcionarios,filtro:filtro,hoje:hoje})
 })
 
 //=============FIM RESERVAS========================

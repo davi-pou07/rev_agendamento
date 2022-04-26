@@ -72,7 +72,6 @@
                     fileReader.onload = function (fileLoadedEvent) {
                         var srcData = fileLoadedEvent.target.result; // <--- data: base64
                         var base64 = document.getElementById(`foto${valor}Base64`).value = srcData
-                        alert(base64)
                         var foto = document.getElementById(`foto${valor}`).src = srcData
                     }
                     fileReader.readAsDataURL(fileToLoad);

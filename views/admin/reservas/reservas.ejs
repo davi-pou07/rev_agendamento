@@ -36,6 +36,10 @@
                 <input type="radio" onchange="redirect()" name="filtro" <%=(filtro == 3)?'checked':''%> value="3" class="form-check-input" id="filtro3">
                 <label class="form-check-label" for="filtro0">Administrativos</label>
               </li>
+              <li class="nav-item mx-2">
+                <input type="checkbox" onchange="redirect()" <%=(hoje == true)?'checked':''%> value="true" class="form-check-input" id="hoje">
+                <label class="form-check-label" for="hoje">Somente Hoje</label>
+              </li>
             </ul>
           </div>
 
@@ -77,9 +81,10 @@
   function redirect() {
     var barber = document.getElementById("barber").value
     var filtro = document.querySelector('input[name="filtro"]:checked').value;
-    filtro = (filtro == undefined)?0:filtro
+    var hoje = document.getElementById("hoje").checked
+    
     if (barber != 0) {
-      document.location = `/admin/reservas/?barberId=${barber}&filtro=${filtro}`
+      document.location = `/admin/reservas/?barberId=${barber}&filtro=${filtro}&hoje=${hoje}`
     }
   }
 
@@ -106,7 +111,7 @@
   $(document).ready( function () {
     $('#rtable').DataTable({
         "info": false,
-        "order": [[ 3, "desc" ],[ 4, "desc" ],[ 5, "desc" ]]
+        "order": [[ 4, "desc" ],[ 3, "asc" ],[ 5, "desc" ]]
 
     });
   });

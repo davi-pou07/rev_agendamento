@@ -35,8 +35,8 @@
           <%cortes.forEach((corte,index) =>{%>
             <%if(index < 6){%>
               <div class="col">
-                <div class="card mb-4 rounded-3 shadow-sm border-primary">
-                  <div class="card-header py-3 text-white bg-primary border-primary">
+                <div class="card mb-4 rounded-3 shadow-sm border-dark">
+                  <div class="card-header py-3 text-white bg-dark border-dark">
                     <h4 class="my-0 fw-bolder"><%=corte.nome%></h4>
                     <p class="my-2 fw-normal"><%=corte.descricao%></p>
                   </div>
@@ -46,7 +46,7 @@
                       <li>Tempo de duração</li>
                       <li><%=corte.tempo%></li>
                     </ul>
-                    <a href="/agendamento/?corteId=<%=corte.id%>" class="w-100 btn btn-lg btn-primary">Agendar</a>
+                    <a href="/agendamento/?corteId=<%=corte.id%>" class="w-100 btn btn-lg btn-dark">Agendar</a>
                   </div>
                 </div>
               </div>
@@ -144,10 +144,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
     <script>
 
-      window.addEventListener('load',()=>{
+      window.addEventListener('load',avisos())
+
+      function avisos() {
         axios.get("/api/avisos").then(resp =>{
           var avisos = resp.data.avisos
           var modalBody = document.getElementById("modalBody")
+          modalBody.innerHTML = ''
           if (avisos != undefined && avisos.length > 0) {
             avisos.forEach(aviso =>{
               if (aviso.status == true) {
@@ -166,7 +169,7 @@
             modalAvisos.show()
           }
         })
-      })
+      }
 
       function redirect(){
         var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom']
